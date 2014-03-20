@@ -1,0 +1,82 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Platform_Allocation_Tool.Site" %>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head runat="server">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Platform Allocation</title>
+
+<link href="~/Content/kendo.common.min.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/kendo.default.min.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/jquery.min.js" > </script>
+<script src="~/Scripts/kendo.all.min.js"> </script>
+<script src="~/Scripts/kendo.aspnetmvc.min.js"> </script>
+
+<style type="text/css">
+.style1 {
+	background-image: url('../Images/PATHeader.png');
+}
+.style2 {
+	background-image: url('../Images/PATHeaderRepeat.png');
+}
+.style3 {
+	background-color: #787878;
+}
+.style4 {
+	background-color: #FFFFFF;
+}
+.style5 {
+	background-image: url('../Images/PATHeaderRepeat.png');
+	text-align: center;
+}
+    .auto-style1 {
+        background-color: #787878;
+        height: 1px;
+    }
+</style>
+    
+<asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+</head>
+
+<body style="margin: 0; background-color: #C8C8C8">
+
+    <form id="form1" runat="server">
+
+    <table style="width: 100%; padding:0px; border-collapse: collapse; border-spacing: 0;" >
+	    <tr>
+		    <td class="style1" style="width: 706px; height: 45px">&nbsp;</td>
+		    <td class="style2">&nbsp;</td>
+		    <td class="style5" style="width: 60px">
+		    <img alt="IntelLogo" height="30" src="../Images/IntelLogoPAT.png" width="45" /></td>
+	    </tr>
+    </table>
+    <table style="width:100%; height:50px; padding:0px; border-collapse: collapse; border-spacing: 0; margin: 0 auto;" >
+    </table>
+    <table style="width: 95%; padding:0px; border-collapse: collapse; border-spacing: 0; margin: 0 auto;" >
+	    <tr>
+		    <td style="height: 20px" class="style3">
+                     <asp:Button ID="btnNewDemand" runat="server" Text="New Demand" Style="background-image: url('../Images/tabunselected.png'); padding-right:15px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"  ForeColor="Black" OnClick="btnNewDemand_Click"/>
+                    <asp:Button ID="btnActive" runat="server" Text="Active" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" ForeColor="Black" OnClick="btnActive_Click"/>
+                    <asp:Button ID="btnToBeClaimed" runat="server" Text="To-Be Claimed" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
+                    <asp:Button ID="btnToBeApproved" runat="server" Text="To-Be Approved" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
+                    <asp:Button ID="btnApproved" runat="server" Text="Approved" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
+                    <asp:Button ID="btnClosed" runat="server" Text="Closed" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
+                    <asp:Button ID="btnOrdered" runat="server" Text="Ordered" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
+            </td>
+	    </tr>
+	    <tr>
+            <td class="style4">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+            </td>
+	    </tr>
+	    <tr>
+		    <td style="height: 23px" class="style3"></td>
+	    </tr>
+    </table>
+    </form>
+
+</body>
+
+</html>

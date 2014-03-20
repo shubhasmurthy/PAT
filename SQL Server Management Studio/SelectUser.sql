@@ -1,0 +1,16 @@
+USE [PlatformAllocation]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[SelectUser] (@id IDSID)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT *
+	  FROM [User]
+	 WHERE ID = @id and Active = 1
+	RETURN @@ROWCOUNT;
+END

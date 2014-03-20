@@ -1,0 +1,16 @@
+USE [PlatformAllocation]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[DeleteDemand] 
+	@demandID TINYINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DELETE
+	FROM [Demand]
+	WHERE [Demand].DemandId = @demandID
+END

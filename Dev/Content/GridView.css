@@ -1,0 +1,35 @@
+﻿.grid				{font-size: 12px; width: 500px;}
+.gridAlternateOld	{background-color: #E0F0E0}
+.gridAlternate1		{background-color: #EFFBEF}
+.gridHeader1		{background-color: #BDD73E; font-size: 14px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; padding-left: 2px; padding-right: 20px; text-align: left}
+.gridAlternate2		{background-color: #F0F5E1}
+.gridAlternate3		{background-color: #CEE8FF}
+.gridAlternate		{background-color: #DDDDDD}
+.gridHeader			{cursor: pointer; background-color: #4A3C8C; color: #FFFFFF; font-size: 14px; font-weight: normal; padding-top: 2px; padding-bottom: 2px; padding-left: 2px; padding-right: 10px; text-align: left; text-decoration: none;white-space:nowrap;}
+.gridHeaderCenter	{background-color: #4A3C8C; color: #FFFFFF; font-size: 14px; font-weight: normal; padding-top: 2px; padding-bottom: 2px; padding-left: 2px; padding-right: 0px; text-align: center; text-decoration: none}
+.gridHeaderLeft		{background-color: #4A3C8C; color: #FFFFFF; font-size: 14px; font-weight: normal; padding-top: 2px; padding-bottom: 2px; padding-left: 2px; padding-right: 0px; text-align: left; text-decoration: none}
+.gridHeaderRight	{background-color: #4A3C8C; color: #FFFFFF; font-size: 14px; font-weight: normal; padding-top: 2px; padding-bottom: 2px; padding-left: 2px; padding-right: 0px; text-align: right; text-decoration: none}
+
+.gridHeaderNumeric	{background-color: #CDCEAD; font-size: 14px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; padding-left: 20px; padding-right: 2px; text-align: right}
+.gridHeaderNumeric1	{background-color: #BDD73E; font-size: 14px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; padding-left: 20px; padding-right: 2px; text-align: right}
+.gridFooter1		{background-color: #BDD73E; font-weight: bold; padding: 10px}
+.gridFooter			{background-color: #4A3C8C; color: #FFFFFF; font-size: 14px; font-weight: normal; padding: 10px}
+.gridPager			{color: #FFFFFF; background-color: #263d00; text-align: center}
+.gridItem			{border-right: 1px solid #F5F5F5}
+.gridIDItem			{text-align: center}
+.gridItemCenter		{text-align: center}
+.gridAlphaItem		{text-align: left; padding-left: 2px; padding-right: 20px}
+.gridNumericItem	{text-align: right; padding-left: 20px; padding-right: 2px}
+
+.gridLinkOLD		{cursor: pointer}
+.gridLinkOLD:link		{background-color: #4A3C8C; color: #FFFFFF; text-decoration: none}
+.gridLinkOLD:visited	{background-color: #4A3C8C; color: #FFFFFF; text-decoration: none}
+.gridLinkOLD:hover		{background-color: #4A3C8C; color: #DAA520; text-decoration: none}
+.gridLinkOLD:active	{background-color: #4A3C8C; color: #FFFFFF; text-decoration: none}
+
+.gridLink							{cursor: pointer}
+.gridLink:link						{text-decoration: none; color: #000000}
+.gridLink:visited					{text-decoration: none}
+.gridLink:hover						{text-decoration: underline; color: #0000FF}
+.gridLink:active					{text-decoration: none; color: #DAA520}
+

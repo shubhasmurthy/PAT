@@ -1,0 +1,20 @@
+USE PlatformAllocation
+GO
+
+CREATE PROCEDURE dbo.PROC_CREATE_STACKTRACELOG_TABLE
+AS
+SET NOCOUNT ON
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id('StackTraceLog')
+AND OBJECTPROPERTY(id, 'IsUserTable') = 1)
+
+CREATE TABLE [dbo].StackTraceLog (
+		ID							INT					NOT NULL,
+		StackTrace					VARCHAR(2000)		NOT NULL,		
+		CreatedDate					DATETIME			NOT NULL DEFAULT GETDATE(),
+		CreatedUser					WWID				NOT NULL,
+		CONSTRAINT stacktracelog_pk PRIMARY KEY (ID),
+);
+GO
+
+EXEC PROC_CREATE_STACKTRACELOG_TABLE

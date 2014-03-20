@@ -1,0 +1,14 @@
+USE [PlatformAllocation]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[DeleteTechDoc] (@id TINYINT)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DELETE FROM TechnicalDocumentation WHERE DemandId = @id
+	RETURN @@ROWCOUNT;
+END

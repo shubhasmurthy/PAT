@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="de8b2f16-4af6-4038-b81e-ace3c0532a2c" name="UseCaseModel" linkedPackageId="fe1abbad-68bf-40c9-97e7-765ad773a664" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="919e73bb-72dc-4250-bca8-9e03f5c2c3e8" name="Administrator" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="1ceecc54-f38f-4177-b98d-6ab21d7dd10e" />
+        <targetEnds>
+          <association Id="e69e00a5-c036-4329-a9c0-c75bc38d5640" isDerived="false" sourceEndRoleName="Administrator" targetEndRoleName="Create Demand Window" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="554817f0-ce2c-4bb9-8506-d0a112ed934e" LastKnownName="Create Demand Window" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="20a02f7e-adac-4959-9266-cf0a6f2924cd" name="Administrator" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="58f3efd4-da6d-43ca-aa0a-1d28df5ebc5c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7313e674-93f9-4afc-ae8f-664ccd79dd9b" name="Create Demand Window" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="6f91bb9d-2c47-4430-a259-1afd8609aa3e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e6ff606c-de5d-4881-9171-ac0a990cd82b" />
+          </association>
+          <association Id="e6bef368-3e36-406b-a2c9-e11c0719261b" isDerived="false" sourceEndRoleName="Administrator" targetEndRoleName="Cancel Demand Window" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="433af6a9-28d4-48fa-b23a-32f1307781ef" LastKnownName="Delete Demand Window" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="681c97cc-2ff3-453c-91d5-33b00cb07c49" name="Administrator" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b786e727-1cf8-4104-bac0-a4704fb0d863" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8844b9f7-2c52-46bf-86c7-25a75cbd1e99" name="Cancel Demand Window" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="e12d3cb5-a7a8-47e9-97d5-e6db40bace39" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="f1dc6028-6e8b-49fd-aee2-d7bf15b0fa30" />
+          </association>
+          <association Id="a4931bb5-525e-48aa-9aa3-681e09206dfb" isDerived="false" sourceEndRoleName="Administrator" targetEndRoleName="Place Order" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="5b17304f-b21d-41ab-8af6-5495e5c607da" LastKnownName="Place Order" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="63bdebef-d4cc-405f-ade3-4763e75b18e3" name="Administrator" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="e4f35a94-2ad8-426e-96ba-7452f75d592b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="4a63a36d-1ff8-4230-8476-423b11b06085" name="Place Order" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="9bae5d4c-cfac-4662-80e4-eb11a848a206" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="6629a1bf-7383-412a-83f0-e2e7c7321bc6" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="b9836394-f9f0-4e62-9d9c-90a967f27efc" name="Team Rep" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="d56fcd16-e215-4ef9-a1e9-93b7a3e639b1" />
+        <targetEnds>
+          <association Id="7f3027ab-5ae3-40c1-a38c-4ef08b57dc26" isDerived="false" sourceEndRoleName="Team Rep" targetEndRoleName="Enter Demand" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="d4a517ae-ef88-49c8-aff4-763ef4748ac9" LastKnownName="Enter Demand" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b4204fae-c589-4acd-93af-076850dbcc96" name="Team Rep" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="8f3c0334-5d99-4e7b-bd1c-f1cde64b4d4d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="566ce4a0-3fe4-43ee-a79c-84fdf23a906a" name="Enter Demand" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="5a7d3452-1968-4c1a-b4ae-043c10d7e720" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="edab56aa-0cea-4adf-95fe-06e9bd4c1779" />
+          </association>
+          <association Id="e46d84d3-84db-4656-a1a5-2d086a218863" isDerived="false" sourceEndRoleName="Team Rep" targetEndRoleName="Update Demand" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="85a1f0bc-e704-45ee-b1ad-06130bb17b73" LastKnownName="Update Demand" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="afec8fb1-96f5-4d07-8e5b-059df643cff4" name="Team Rep" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="18e5cd7c-7168-4878-a722-c6d9d784710c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="abf9f6e5-1d97-4634-80bb-66d72fbf73c7" name="Update Demand" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="8cab6ce5-cfcb-47a8-b288-6e949218f704" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="4b3ad92e-be72-4ac1-9906-72cac0482beb" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="19c5d0d2-7a4c-4afc-af5d-537067e99916" name="Team Manager" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="448ac0f6-c2fc-430a-a475-adc5fe3dcd33" />
+        <targetEnds>
+          <association Id="78afb00c-d962-4e75-be1a-ac4eeaef0338" isDerived="false" sourceEndRoleName="Team Manager" targetEndRoleName="Approve Demand" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="bef40a2a-1d8d-4290-aafa-5d8844e78416" LastKnownName="Approve Demand" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="1dec4179-fa0f-44b9-8ab1-76314397a7c2" name="Team Manager" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b03241e1-c298-49c0-aa3f-9e9068a1731a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f8a074de-6493-4b15-bebe-e6be2dedbe77" name="Approve Demand" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="e842239b-2b25-4bd3-b62a-1ff85cf51ec3" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="545de46b-4554-4298-bf4f-d0aff9fd8dc8" />
+          </association>
+          <association Id="2e0ed8db-06a3-42ea-b8f2-49ce7a08af84" isDerived="false" sourceEndRoleName="Team Manager" targetEndRoleName="Deny Demand" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="4b74dd4d-10cb-43c5-a08b-af699a9bff6b" LastKnownName="Deny Demand" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="0a0d1c91-dd51-40bd-94e2-335c2d328957" name="Team Manager" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="7c24dfdd-1739-48b9-9d3f-8f575b020138" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3d31d154-dd88-4dae-83bb-bd67b0c65e22" name="Deny Demand" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="77594ece-a8ce-40ad-9d37-237a7eb2c706" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="b30464b9-539a-4028-8a31-a8028972fe57" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="d9054de9-6e23-4bee-9103-97cf90e8c27e" name="Viewer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="f05ee00c-f0b0-4f64-8daf-91e1af1b6f8c" />
+        <targetEnds>
+          <association Id="0179f74b-0199-4455-8c11-1a50820c7ca4" isDerived="false" sourceEndRoleName="Viewer" targetEndRoleName="View Orders" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="3432775b-f1a9-4fd9-9c94-d8c30775730b" LastKnownName="View Demands" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="6eed8c41-ad14-4b02-a19c-7b75d93aca4a" name="Viewer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="73f5ef6d-f94c-41db-bd34-62c21dde9c05" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="14c013f4-3dcd-455b-a4d3-77288279339a" name="View Orders" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="947ed6ed-6901-441a-bbf3-50f32331b439" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="fe9c0f85-063d-4fb4-98a9-093dbf798b2d" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="ef81cd25-9629-4681-8619-290d713aa700" name="Director" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="2867417d-c4e2-4679-be84-63726995a916" />
+        <targetEnds>
+          <association Id="0e4ec3d3-aad1-4b3b-8b0f-d53eabec704e" isDerived="false" sourceEndRoleName="Director" targetEndRoleName="Approve Demand" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="bef40a2a-1d8d-4290-aafa-5d8844e78416" LastKnownName="Approve Demand" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="ea5461eb-6875-4862-aab9-41d84cc90052" name="Director" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="014a86db-caa1-40da-beb0-75f15f5ca2ae" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f8b52b09-2c07-4ec4-b10f-f9aa716da812" name="Approve Demand" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="1f8d2353-3891-4d3a-abc1-190148ae75e0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c1292f3b-1c42-4b2a-a986-cbb13bb2d180" />
+          </association>
+          <association Id="fa1ddfb4-020f-4d90-b24c-4f5a7f0dc9ba" isDerived="false" sourceEndRoleName="Director" targetEndRoleName="Deny Demand" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="4b74dd4d-10cb-43c5-a08b-af699a9bff6b" LastKnownName="Deny Demand" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f504e4f6-60d9-411e-94e5-b57a62a8cb22" name="Director" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="7b7a862d-b9bd-4fcf-a248-a3333f1f83c0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="37594147-81b6-4675-950b-fb2f900381a3" name="Deny Demand" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="7b8dc804-3721-498f-b0de-bcbde25b4511" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="3b0e4e14-6241-4dc1-b8d6-b5e2c058e0d9" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="d278489b-a249-49a6-b653-3dc81ce9ff6b" name="Lab Technician" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="12412790-390b-4fa0-98a6-92040da38093" />
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="554817f0-ce2c-4bb9-8506-d0a112ed934e" name="Create Demand Window" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="087148df-b50d-4bd9-99e4-a4a398710d4e" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="433af6a9-28d4-48fa-b23a-32f1307781ef" name="Delete Demand Window" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="2ddcde90-f950-4c94-bf4f-ed315f827313" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="d4a517ae-ef88-49c8-aff4-763ef4748ac9" name="Enter Demand" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="20ee55f5-41f0-4146-8f5a-23ddd0765039" />
+        <additions>
+          <include Id="4cca5927-ca48-4c2e-8cce-a2c36f945f4a">
+            <useCaseMoniker Id="c22ebda0-c4d9-414a-8825-ef9fd6705ec5" LastKnownName="Send Confirmation" />
+            <elementDefinition Id="77e0a0fb-5b21-4225-8c5b-53e34683dfe7" />
+          </include>
+          <include Id="c69ed66a-25d5-42da-932e-95b71c38ac0e">
+            <useCaseMoniker Id="39fe09aa-8e03-43c7-b491-dcf235ebff69" LastKnownName="Request Approval" />
+            <elementDefinition Id="79cd51c1-d4cb-40fa-a3dc-376e67d2ef48" />
+          </include>
+        </additions>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="85a1f0bc-e704-45ee-b1ad-06130bb17b73" name="Update Demand" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="0088cd19-cde8-4015-a3b1-eb2c90c79130" />
+        <additions>
+          <include Id="b21f9b2e-b4d7-436d-aa0a-f46c003cb28f">
+            <useCaseMoniker Id="c22ebda0-c4d9-414a-8825-ef9fd6705ec5" LastKnownName="Send Confirmation" />
+            <elementDefinition Id="ea9d4620-b6ed-49bc-81b9-38083770c256" />
+          </include>
+        </additions>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="bef40a2a-1d8d-4290-aafa-5d8844e78416" name="Approve Demand" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="02f59b65-616f-42f3-bbe3-9402053057e5" />
+        <additions>
+          <include Id="3e59b67e-1ab1-475a-b3e3-d33fb73e8dbe">
+            <useCaseMoniker Id="c22ebda0-c4d9-414a-8825-ef9fd6705ec5" LastKnownName="Send Confirmation" />
+            <elementDefinition Id="0248fda7-bace-4582-9020-86bc50c04dff" />
+          </include>
+        </additions>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="4b74dd4d-10cb-43c5-a08b-af699a9bff6b" name="Deny Demand" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="817f8b4a-b8d9-4b0f-ae3f-538eff19c090" />
+        <additions>
+          <include Id="3dc56bd3-c303-424c-9c55-183c076da741">
+            <useCaseMoniker Id="c22ebda0-c4d9-414a-8825-ef9fd6705ec5" LastKnownName="Send Confirmation" />
+            <elementDefinition Id="a3399953-af1b-46e5-87fa-46b4b67710a0" />
+          </include>
+        </additions>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="39fe09aa-8e03-43c7-b491-dcf235ebff69" name="Request Approval" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="1c630666-712a-45c8-8f0f-751aeb8a7198" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="2fa3df62-5130-42f9-a868-a3ab7eabe874" name="Send Reminder" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="80ed776b-5f51-46b8-81fd-bc7157ee0c92" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="c22ebda0-c4d9-414a-8825-ef9fd6705ec5" name="Send Confirmation" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="0d96c905-40ce-42b1-beb0-a004c14f1814" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="5b17304f-b21d-41ab-8af6-5495e5c607da" name="Place Order" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="222f0f11-0025-491d-bafb-43d8658d6e10" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="3432775b-f1a9-4fd9-9c94-d8c30775730b" name="View Demands" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="e0bb3395-4581-4d7f-ba7a-65504a64ac89" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="ceaa86b3-1fc4-4b74-8afe-b224af9afc55" name="Timer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="ddf568b6-5f64-4de2-a95e-f3618f93700e" />
+        <targetEnds>
+          <association Id="f6074011-89ec-412c-ab0a-e44ed4320df9" isDerived="false" sourceEndRoleName="System" targetEndRoleName="Send Reminder" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="2fa3df62-5130-42f9-a868-a3ab7eabe874" LastKnownName="Send Reminder" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="263ba503-4068-4292-9812-63ba596eb95d" name="System" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="667ea92c-3896-44d7-816d-9b541c9003e9" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="712543ea-2bbc-4770-924e-d0f43ec08b08" name="Send Reminder" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="19198e2d-7dbd-4007-997f-0a8fd1932c30" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="4734396c-cbc3-4512-8a37-4ad7b940ce96" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="fe1abbad-68bf-40c9-97e7-765ad773a664" name="Domain Model">
+    <elementDefinition Id="3de8fe80-5e06-409f-bae7-8e43699c1b02" />
+    <profileInstances>
+      <packageHasProfileInstances Id="65c935b2-177e-4ef6-9ab0-8a1ad513b522">
+        <profileInstance Id="9ad87be1-843e-4fd3-be77-45fabd7d99d9" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="7fcc7e8a-2ade-4779-b3b4-bfec49ca7582">
+        <profileInstance Id="1b0083a7-65eb-4086-aa9c-59b251ff48b2" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</useCaseModelRoot>
