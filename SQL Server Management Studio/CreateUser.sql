@@ -34,10 +34,10 @@ INSERT INTO [dbo].[User] (ID, [Password], [RoleID], FirstName, LastName, eAddres
  VALUES ('ssundaMT', 'password', 3, 'Shubha', 'Murthy', 'shubhasmurthy@asu.com', '77185629');
 
   INSERT INTO [dbo].[User] (ID, [Password], [RoleID], FirstName, LastName, eAddress, WWID)
- VALUES ('ssundaTD', 'password', 2, 'Shubha', 'Murthy', 'shubhasmurthy@asu.com', '69968220');
+ VALUES ('ssundaRT', 'password', 2, 'Shubha', 'Murthy', 'shubhasmurthy@asu.com', '69968220');
 
    INSERT INTO [dbo].[User] (ID, [Password], [RoleID], FirstName, LastName, eAddress, WWID)
- VALUES ('ssundaRT', 'password', 2, 'Shubha', 'Murthy', 'shubhasmurthy@asu.com', '18185637');
+ VALUES ('ssundaRD', 'password', 2, 'Shubha', 'Murthy', 'shubhasmurthy@asu.com', '18185637');
 
 SELECT * FROM [User]
 

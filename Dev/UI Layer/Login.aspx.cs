@@ -18,16 +18,28 @@ namespace Platform_Allocation_Tool.UI_Layer
             myButton.Visible = false;
             myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnActive");
             myButton.Visible = false;
+            myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnSaved");
+            myButton.Visible = false;
             myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnApproved");
             myButton.Visible = false;
             myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnToBeClaimed");
             myButton.Visible = false;
             myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnOrdered");
             myButton.Visible = false;
+            myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnDeclined");
+            myButton.Visible = false;
             myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnToBeApproved");
             myButton.Visible = false;
             myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnClosed");
             myButton.Visible = false;
+            myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnWaitingApproval");
+            myButton.Visible = false;
+            myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnLogout");
+            myButton.Visible = false;
+            myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnMaintenance");
+            myButton.Visible = false;
+            
+            
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)

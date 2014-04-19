@@ -22,6 +22,7 @@ INSERT INTO [dbo].State (Id, Name) VALUES ('1', 'Open');
 INSERT INTO [dbo].State (Id, Name) VALUES ('2', 'Saved');
 INSERT INTO [dbo].State (Id, Name) VALUES ('3', 'Approved');
 INSERT INTO [dbo].State (Id, Name) VALUES ('4', 'Closed');
+INSERT INTO [dbo].State (Id, Name) VALUES ('6', 'Declined');
 
 DELETE FROM [dbo].State WHERE Id='0';
 

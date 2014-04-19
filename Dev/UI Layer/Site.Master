@@ -6,12 +6,8 @@
 <head runat="server">
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 <title>Platform Allocation</title>
-
-<link href="~/Content/kendo.common.min.css" rel="stylesheet" type="text/css" />
-<link href="~/Content/kendo.default.min.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Questrial' rel='stylesheet' type='text/css'>
 <script src="~/Scripts/jquery.min.js" > </script>
-<script src="~/Scripts/kendo.all.min.js"> </script>
-<script src="~/Scripts/kendo.aspnetmvc.min.js"> </script>
 
 <style type="text/css">
 .style1 {
@@ -21,7 +17,7 @@
 	background-image: url('../Images/PATHeaderRepeat.png');
 }
 .style3 {
-	background-color: #787878;
+	background-color: #525050;
 }
 .style4 {
 	background-color: #FFFFFF;
@@ -34,35 +30,165 @@
         background-color: #787878;
         height: 1px;
     }
+
+    .bootshape {
+        font-family: 'Questrial', sans-serif;
+        background-color: #FFF;
+        text-align: center;
+        color: #333;
+        padding-bottom:100px;
+    }
+    .bootshape a,
+    .bootshape a:hover,
+    .bootshape a:focus {
+      color: #dd745c;
+    }
+    .bootshape h1 {
+      color: #dd745c;
+      font-family: 'Questrial', sans-serif;
+      padding-bottom: 20px;
+      font-weight: bold;
+      font-size: 35px;
+    }
+    .bootshape h2 {
+      color: #dd745c;
+      font-family: 'Questrial', sans-serif;
+      padding-bottom: 20px;
+      font-weight: 200;
+      font-size: 18px;
+    }
+    .bootshape .form-control {
+      background-color: #f1f0f0;
+      border-radius: 0;
+      border: none;
+      margin: 0 0 10px 0;
+      color: #333;
+      box-shadow: none;
+      height: 62px;
+      font-family: 'Questrial', sans-serif;
+      text-align: center;
+      font-size: 22px;
+    }
+    .bootshape .form-control:focus {
+      border-color: #e4e0e0;
+      outline: 0;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.015), 0 0 8px rgba(228, 224, 224, 0.6);
+      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.015), 0 0 8px rgba(228, 224, 224, 0.6);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.015), 0 0 8px rgba(228, 224, 224, 0.6);
+    }
+    .bootshape .btn-lg {
+      font-size: 22px;
+      height: 62px;
+      border-radius: 0;
+      background-color: #dd745c;
+      border: 0;
+      text-transform: uppercase;
+    }
+    .bootshape .btn-primary:hover,
+    .bootshape .btn-primary:focus {
+      background-color: #ba523a;
+    }
+    .bootshape .forgot-password {
+      padding-top: 20px;
+      text-decoration: underline;
+      color: #333;
+      font-size: 18px;
+    }
+    .bootshape .forgot-password a {
+      color: #333;
+    }
+    .bootshape .footer {
+      padding: 20px 0;
+    }
+    .bootshape .simple-login {
+      margin: 0 auto;
+      max-width: 500px;
+      padding: 0px 15px 15px 15px;
+    }
+
+    .form-control {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+.form-control:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+}
+.form-control:-moz-placeholder {
+  color: #999;
+}
+.form-control::-moz-placeholder {
+  color: #999;
+  opacity: 1;
+}
+.form-control:-ms-input-placeholder {
+  color: #999;
+}
+.form-control::-webkit-input-placeholder {
+  color: #999;
+}
+
+.btn-block {
+  display: block;
+  width: 105%;
+  padding-right: 0;
+  padding-left: 0;
+}
+.btn-block + .btn-block {
+  margin-top: 5px;
+}
+
 </style>
     
 <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
 
-<body style="margin: 0; background-color: #C8C8C8">
+<body style="margin: 0; background-image: url('../Images/background.jpg'); background-repeat: no-repeat; background-size: 100%;">
 
     <form id="form1" runat="server">
-
+    <br />
     <table style="width: 100%; padding:0px; border-collapse: collapse; border-spacing: 0;" >
 	    <tr>
-		    <td class="style1" style="width: 706px; height: 45px">&nbsp;</td>
+            <link href="../Content/GridView.css" rel="stylesheet" />
+		    <td class="style1" style="width: 706px; height: 43px">&nbsp;</td>
 		    <td class="style2">&nbsp;</td>
 		    <td class="style5" style="width: 60px">
 		    <img alt="IntelLogo" height="30" src="../Images/IntelLogoPAT.png" width="45" /></td>
 	    </tr>
     </table>
-    <table style="width:100%; height:50px; padding:0px; border-collapse: collapse; border-spacing: 0; margin: 0 auto;" >
+    <table style="width:100%; height:75px; padding:0px; border-collapse: collapse; border-spacing: 0; margin: 0 auto;" >
+        <tr><td>Platform Allocation Tool</td></tr>      
     </table>
-    <table style="width: 95%; padding:0px; border-collapse: collapse; border-spacing: 0; margin: 0 auto;" >
+    <table style="width: 65%; padding:0px; border-collapse: collapse; border-spacing: 0; margin: 0 auto; height:720px;" >
 	    <tr>
-		    <td style="height: 20px" class="style3">
+		    <td style="height: 35px" class="style3">
                      <asp:Button ID="btnNewDemand" runat="server" Text="New Demand" Style="background-image: url('../Images/tabunselected.png'); padding-right:15px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"  ForeColor="Black" OnClick="btnNewDemand_Click"/>
-                    <asp:Button ID="btnActive" runat="server" Text="Active" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" ForeColor="Black" OnClick="btnActive_Click"/>
-                    <asp:Button ID="btnToBeClaimed" runat="server" Text="To-Be Claimed" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
-                    <asp:Button ID="btnToBeApproved" runat="server" Text="To-Be Approved" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
-                    <asp:Button ID="btnApproved" runat="server" Text="Approved" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
-                    <asp:Button ID="btnClosed" runat="server" Text="Closed" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
-                    <asp:Button ID="btnOrdered" runat="server" Text="Ordered" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light"/>
+                    <asp:Button ID="btnActive" runat="server" Text="Open" Style="background-image: url('../Images/tabselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" ForeColor="Black" OnClick="btnActive_Click"/>
+                    <asp:Button ID="btnSaved" runat="server" Text="Saved" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" ForeColor="Black" OnClick="btnSaved_Click"/>
+                    <asp:Button ID="btnToBeClaimed" runat="server" Text="To-Be Claimed" Style="background-image: url('../Images/tabselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnToBeClaimed_Click"/>
+                    <asp:Button ID="btnToBeApproved" runat="server" Text="To-Be Approved" Style="background-image: url('../Images/tabselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnToBeApproved_Click"/>
+                    <asp:Button ID="btnWaitingApproval" runat="server" Text="Waiting Approval" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnWaitingApproval_Click"/>
+                    <asp:Button ID="btnDeclined" runat="server" Text="Declined" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" ForeColor="Black" OnClick="btnDeclined_Click"/>
+                    <asp:Button ID="btnApproved" runat="server" Text="Approved" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnApproved_Click"/>
+                    <asp:Button ID="btnClosed" runat="server" Text="Closed" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnClosed_Click"/>
+                    <asp:Button ID="btnOrdered" runat="server" Text="Ordered" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnOrdered_Click"/>
+                    <asp:Button ID="btnMaintenance" runat="server" Text="Admin Utility" Style="background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnMaintenance_Click"/>
+                    <asp:Button ID="btnLogout" runat="server" Text="Log Out" Style="background-image: url('../Images/tabunselected.png'); float:right; padding-right:30px; padding-left:0px; background-repeat: no-repeat" BackColor="Transparent" BorderStyle="None" Height="19px" Width="101px" Font-Bold="True" Font-Names="Neo Sans Intel Light" OnClick="btnLogout_Click"/>
             </td>
 	    </tr>
 	    <tr>
@@ -72,7 +198,7 @@
             </td>
 	    </tr>
 	    <tr>
-		    <td style="height: 23px" class="style3"></td>
+		    <td style="height: 35px" class="style3"></td>
 	    </tr>
     </table>
     </form>

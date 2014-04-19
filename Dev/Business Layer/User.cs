@@ -102,6 +102,11 @@ namespace Platform_Allocation_Tool.Business_Layer
 
         #region Constructors
 
+        public User()
+        {
+
+        }
+       
         public User(String uname, String pwd)
         {
             if (ConnectionData.AuthenticateUser(uname, pwd))
@@ -119,6 +124,11 @@ namespace Platform_Allocation_Tool.Business_Layer
         public static String GetName(String id)
         {
             return ConnectionData.GetSelectedUserName(id); 
+        }
+
+        public static User GetAdmin()
+        {
+            return ConnectionData.GetAdmin();
         }
     }
 }

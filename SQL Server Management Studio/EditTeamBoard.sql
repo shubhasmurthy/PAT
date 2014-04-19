@@ -9,13 +9,12 @@ CREATE PROCEDURE EditTeamBoard
 	@sku VARCHAR(10),
 	@team VARCHAR(30),
 	@demandID TINYINT,
-	@numberOfBoards TINYINT,
-	@user WWID
+	@numberOfBoards TINYINT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	INSERT
-	INTO [TeamBoard](BoardSKU, DemandId, TeamName, NumberOfBoards)
-	VALUES (@sku, @demandID, @team, @numberOfBoards)
+	UPDATE [TeamBoard]
+	SET [TeamBoard].NumberOfBoards = @numberOfBoards
+	WHERE [TeamBoard].DemandId = @demandID AND [TeamBoard].TeamName = @team AND [TeamBoard].BoardSKU = @sku
 END
 GO

@@ -86,6 +86,164 @@ namespace Platform_Allocation_Tool.Data_Layer
             return resultTable;
         }
 
+        public static DataTable ListSavedDemands(User u)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            DataTable resultTable = new DataTable();
+
+            SqlCommand sqlDemandsList = new SqlCommand();
+            sqlDemandsList.Connection = dbConnect;
+            sqlDemandsList.CommandType = CommandType.StoredProcedure;
+            sqlDemandsList.CommandText = "ListSavedDemandsPerUser";
+            sqlDemandsList.Parameters.Add("@id", SqlDbType.VarChar);
+            sqlDemandsList.Parameters["@id"].Value = u.ID;
+
+            SqlDataAdapter sqlAdapter;
+            try
+            {
+                sqlAdapter = new SqlDataAdapter(sqlDemandsList);
+                sqlAdapter.Fill(resultTable);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+            return resultTable;
+        }
+
+        public static DataTable ListClosedDemands(User u)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            DataTable resultTable = new DataTable();
+
+            SqlCommand sqlDemandsList = new SqlCommand();
+            sqlDemandsList.Connection = dbConnect;
+            sqlDemandsList.CommandType = CommandType.StoredProcedure;
+            sqlDemandsList.CommandText = "ListClosedDemandsPerUser";
+            sqlDemandsList.Parameters.Add("@id", SqlDbType.VarChar);
+            sqlDemandsList.Parameters["@id"].Value = u.ID;
+
+            SqlDataAdapter sqlAdapter;
+            try
+            {
+                sqlAdapter = new SqlDataAdapter(sqlDemandsList);
+                sqlAdapter.Fill(resultTable);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+            return resultTable;
+        }
+
+        public static DataTable ListDeclinedDemands(User u)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            DataTable resultTable = new DataTable();
+
+            SqlCommand sqlDemandsList = new SqlCommand();
+            sqlDemandsList.Connection = dbConnect;
+            sqlDemandsList.CommandType = CommandType.StoredProcedure;
+            sqlDemandsList.CommandText = "ListDeclinedDemandsPerUser";
+            sqlDemandsList.Parameters.Add("@id", SqlDbType.VarChar);
+            sqlDemandsList.Parameters["@id"].Value = u.ID;
+
+            SqlDataAdapter sqlAdapter;
+            try
+            {
+                sqlAdapter = new SqlDataAdapter(sqlDemandsList);
+                sqlAdapter.Fill(resultTable);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+            return resultTable;
+        }
+
+        public static DataTable ListOrderedDemands(User u)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            DataTable resultTable = new DataTable();
+
+            SqlCommand sqlDemandsList = new SqlCommand();
+            sqlDemandsList.Connection = dbConnect;
+            sqlDemandsList.CommandType = CommandType.StoredProcedure;
+            sqlDemandsList.CommandText = "ListOrderedDemandsPerUser";
+            sqlDemandsList.Parameters.Add("@id", SqlDbType.VarChar);
+            sqlDemandsList.Parameters["@id"].Value = u.ID;
+
+            SqlDataAdapter sqlAdapter;
+            try
+            {
+                sqlAdapter = new SqlDataAdapter(sqlDemandsList);
+                sqlAdapter.Fill(resultTable);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+            return resultTable;
+        }
+
+        public static void AddNewProgram(string programName)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+            try
+            {
+                SqlCommand sqlAddNewProgram = new SqlCommand();
+                sqlAddNewProgram.Connection = dbConnect;
+                sqlAddNewProgram.CommandType = CommandType.StoredProcedure;
+                sqlAddNewProgram.CommandText = "InsertNewProgram";
+                sqlAddNewProgram.Parameters.Add("@ProgramName", SqlDbType.VarChar);
+                sqlAddNewProgram.Parameters["@ProgramName"].Value = programName;
+
+                sqlAddNewProgram.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
         public static bool AuthenticateUser(string username, string password)
         {  
             SqlConnection dbConnect = new SqlConnection(connectionString);
@@ -133,6 +291,11 @@ namespace Platform_Allocation_Tool.Data_Layer
 
                     if (dbReader["Name"] != DBNull.Value)
                         demand.Status = dbReader["Name"].ToString();
+
+                    if (dbReader["DeclineReason"] != DBNull.Value)
+                        demand.DeclineReason = dbReader["DeclineReason"].ToString();
+                    else
+                        demand.DeclineReason = "";
 
                     dbReader.Close();
                 }
@@ -211,6 +374,57 @@ namespace Platform_Allocation_Tool.Data_Layer
                 dbConnect.Close();
             }
 
+        }
+
+        public static User GetAdmin()
+        {
+            User user = new User();
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            SqlCommand sqlSelectUser = new SqlCommand();
+            sqlSelectUser.Connection = dbConnect;
+            sqlSelectUser.CommandType = CommandType.StoredProcedure;
+            sqlSelectUser.CommandText = "GetAdmin";
+
+            SqlDataReader dbReader = sqlSelectUser.ExecuteReader();
+            try
+            {
+                if (dbReader.Read())
+                {
+                    if (dbReader["ID"] != DBNull.Value)
+                        user.ID = dbReader["ID"].ToString();
+
+                    if (dbReader["FirstName"] != DBNull.Value)
+                        user.FirstName = dbReader["FirstName"].ToString();
+
+                    if (dbReader["LastName"] != DBNull.Value)
+                        user.LastName = dbReader["LastName"].ToString();
+
+                    if (dbReader["WWID"] != DBNull.Value)
+                        user.WWID = dbReader["WWID"].ToString();
+
+                    if (dbReader["eAddress"] != DBNull.Value)
+                        user.Email = dbReader["eAddress"].ToString();
+
+                    if (dbReader["Active"] != DBNull.Value)
+                        user.Active = Convert.ToBoolean(dbReader["Active"].ToString());
+
+                    dbReader.Close();
+                }
+                else
+                {
+                    dbReader.Close();
+                    throw new UnauthorizedAccessException();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                dbReader.Close();
+                throw ex;
+            }
+            return user;
         }
         public static void GetSelectedUser(User user)
         {
@@ -291,6 +505,37 @@ namespace Platform_Allocation_Tool.Data_Layer
             finally
             {
                 dbConnect.Close();
+            }
+        }
+
+        public static void GetSelectedTeam(Team team)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            SqlCommand sqlSelectTeam = new SqlCommand();
+            sqlSelectTeam.Connection = dbConnect;
+            sqlSelectTeam.CommandType = CommandType.StoredProcedure;
+            sqlSelectTeam.CommandText = "SelectTeam";
+            sqlSelectTeam.Parameters.Add("@name", SqlDbType.VarChar);
+            sqlSelectTeam.Parameters.Add("@mgrID", SqlDbType.VarChar, 8).Direction = ParameterDirection.Output;
+            sqlSelectTeam.Parameters.Add("@repID", SqlDbType.VarChar, 8).Direction = ParameterDirection.Output;
+            sqlSelectTeam.Parameters.Add("@mgrEmailID", SqlDbType.VarChar, 60).Direction = ParameterDirection.Output;
+            sqlSelectTeam.Parameters.Add("@repEmailID", SqlDbType.VarChar, 60).Direction = ParameterDirection.Output;
+
+            sqlSelectTeam.Parameters["@name"].Value = team.Name;
+            try
+            {
+                sqlSelectTeam.ExecuteNonQuery();
+                team.MgrId = sqlSelectTeam.Parameters["@mgrID"].Value.ToString();
+                team.RepId = sqlSelectTeam.Parameters["@repID"].Value.ToString();
+                team.MgrEmailId = sqlSelectTeam.Parameters["@mgrEmailID"].Value.ToString();
+                team.RepEmailId = sqlSelectTeam.Parameters["@repEmailID"].Value.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -419,7 +664,7 @@ namespace Platform_Allocation_Tool.Data_Layer
             }
             catch (Exception ex)
             {
-                throw ex;
+               // throw ex;
             }
 
             finally
@@ -441,29 +686,7 @@ namespace Platform_Allocation_Tool.Data_Layer
 
             try
             {
-                sqlInsertDemand.Connection = dbConnect;
-                sqlInsertDemand.CommandType = CommandType.StoredProcedure;
-                sqlInsertDemand.CommandText = "EditDemand";
-
-                sqlInsertDemand.Parameters.Add("@demandID", SqlDbType.TinyInt);
-                sqlInsertDemand.Parameters.Add("@name", SqlDbType.VarChar);
-                sqlInsertDemand.Parameters.Add("@pfName", SqlDbType.VarChar);
-                sqlInsertDemand.Parameters.Add("@prgName", SqlDbType.VarChar);
-                sqlInsertDemand.Parameters.Add("@openDate", SqlDbType.DateTime);
-                sqlInsertDemand.Parameters.Add("@closeDate", SqlDbType.DateTime);
-                sqlInsertDemand.Parameters.Add("@user", SqlDbType.VarChar);
-                sqlInsertDemand.Parameters.Add("@state", SqlDbType.VarChar);
-
-                sqlInsertDemand.Parameters["@demandID"].Value = demand.DemandId;
-                sqlInsertDemand.Parameters["@name"].Value = demand.DemandName;
-                sqlInsertDemand.Parameters["@pfName"].Value = demand.PlatformName;
-                sqlInsertDemand.Parameters["@prgName"].Value = demand.ProgramName;
-                sqlInsertDemand.Parameters["@openDate"].Value = demand.CreatedDate;
-                sqlInsertDemand.Parameters["@closeDate"].Value = demand.CloseDate;
-                sqlInsertDemand.Parameters["@user"].Value = user.ID;
-                sqlInsertDemand.Parameters["@state"].Value = demand.Status;
-
-                sqlInsertDemand.ExecuteNonQuery();
+                EditDemandDetails(demand, user);
 
                 sqlDeleteTeamBoard.Connection = dbConnect;
                 sqlDeleteTeamBoard.CommandType = CommandType.StoredProcedure;
@@ -525,6 +748,157 @@ namespace Platform_Allocation_Tool.Data_Layer
                     }
 
                 }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
+        public static void EditTeamBoard(Demand demand)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+           
+            SqlCommand sqlInsertTeamBoard = new SqlCommand();
+
+            try
+            {
+                sqlInsertTeamBoard.Connection = dbConnect;
+                sqlInsertTeamBoard.CommandType = CommandType.StoredProcedure;
+                sqlInsertTeamBoard.CommandText = "EditTeamBoard";
+
+                sqlInsertTeamBoard.Parameters.Add("@sku", SqlDbType.VarChar);
+                sqlInsertTeamBoard.Parameters.Add("@team", SqlDbType.VarChar);
+                sqlInsertTeamBoard.Parameters.Add("@numberOfBoards", SqlDbType.TinyInt);
+                sqlInsertTeamBoard.Parameters.Add("@demandId", SqlDbType.TinyInt);
+
+                foreach (TeamBoard tb in demand.Boards)
+                {
+                    sqlInsertTeamBoard.Parameters["@sku"].Value = tb.SKU;
+                    sqlInsertTeamBoard.Parameters["@team"].Value = tb.TeamName;
+                    sqlInsertTeamBoard.Parameters["@demandId"].Value = demand.DemandId;
+                    sqlInsertTeamBoard.Parameters["@numberOfBoards"].Value = tb.NumberOfBoards;
+                    sqlInsertTeamBoard.ExecuteNonQuery();
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
+        public static void EditDemandDetails(Demand demand, User user)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+            SqlCommand sqlInsertDemand = new SqlCommand();
+
+            try
+            {
+                sqlInsertDemand.Connection = dbConnect;
+                sqlInsertDemand.CommandType = CommandType.StoredProcedure;
+                sqlInsertDemand.CommandText = "EditDemand";
+
+                sqlInsertDemand.Parameters.Add("@demandID", SqlDbType.TinyInt);
+                sqlInsertDemand.Parameters.Add("@name", SqlDbType.VarChar);
+                sqlInsertDemand.Parameters.Add("@pfName", SqlDbType.VarChar);
+                sqlInsertDemand.Parameters.Add("@prgName", SqlDbType.VarChar);
+                sqlInsertDemand.Parameters.Add("@openDate", SqlDbType.DateTime);
+                sqlInsertDemand.Parameters.Add("@closeDate", SqlDbType.DateTime);
+                sqlInsertDemand.Parameters.Add("@user", SqlDbType.VarChar);
+                sqlInsertDemand.Parameters.Add("@state", SqlDbType.VarChar);
+
+                sqlInsertDemand.Parameters["@demandID"].Value = demand.DemandId;
+                sqlInsertDemand.Parameters["@name"].Value = demand.DemandName;
+                sqlInsertDemand.Parameters["@pfName"].Value = demand.PlatformName;
+                sqlInsertDemand.Parameters["@prgName"].Value = demand.ProgramName;
+                sqlInsertDemand.Parameters["@openDate"].Value = demand.CreatedDate;
+                sqlInsertDemand.Parameters["@closeDate"].Value = demand.CloseDate;
+                sqlInsertDemand.Parameters["@user"].Value = user.ID;
+                sqlInsertDemand.Parameters["@state"].Value = demand.Status;
+
+                sqlInsertDemand.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
+        public static void UpdateDemandStatus(Demand demand, User user)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+            SqlCommand sqlInsertDemand = new SqlCommand();
+
+            try
+            {
+                sqlInsertDemand.Connection = dbConnect;
+                sqlInsertDemand.CommandType = CommandType.StoredProcedure;
+                sqlInsertDemand.CommandText = "UpdateDemandStatus";
+
+                sqlInsertDemand.Parameters.Add("@demandID", SqlDbType.TinyInt);
+                sqlInsertDemand.Parameters.Add("@state", SqlDbType.VarChar);
+
+                sqlInsertDemand.Parameters["@demandID"].Value = demand.DemandId;
+                sqlInsertDemand.Parameters["@state"].Value = demand.Status;
+
+                sqlInsertDemand.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
+        public static void SaveDemand(Demand demand, User user)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+            SqlCommand sqlInsertDemand = new SqlCommand();
+            SqlCommand sqlInsertTeamBoard = new SqlCommand();
+
+            try
+            {
+                UpdateDemandStatus(demand, user);
+
+                sqlInsertTeamBoard.Connection = dbConnect;
+                sqlInsertTeamBoard.CommandType = CommandType.StoredProcedure;
+                sqlInsertTeamBoard.CommandText = "EditTeamBoard";
+
+                sqlInsertTeamBoard.Parameters.Add("@sku", SqlDbType.VarChar);
+                sqlInsertTeamBoard.Parameters.Add("@team", SqlDbType.VarChar);
+                sqlInsertTeamBoard.Parameters.Add("@numberOfBoards", SqlDbType.TinyInt);
+                sqlInsertTeamBoard.Parameters.Add("@demandId", SqlDbType.TinyInt);
+
+                EditTeamBoard(demand);
 
             }
             catch (Exception ex)
@@ -709,6 +1083,65 @@ namespace Platform_Allocation_Tool.Data_Layer
                 dbConnect.Close();
             }
         }
+
+        public static void MonitorClosedDemands()
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            SqlCommand sqlUpdateClosedDemands = new SqlCommand();
+
+            try
+            {
+                sqlUpdateClosedDemands.Connection = dbConnect;
+                sqlUpdateClosedDemands.CommandType = CommandType.StoredProcedure;
+                sqlUpdateClosedDemands.CommandText = "MonitorClosedDemands";
+                sqlUpdateClosedDemands.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
+        public static void WriteDeclineReason(Demand d)
+        {
+            SqlConnection dbConnect = new SqlConnection(connectionString);
+            dbConnect.Open();
+
+            SqlCommand sqlWriteDeclineReason = new SqlCommand();
+
+            try
+            {
+                sqlWriteDeclineReason.Connection = dbConnect;
+                sqlWriteDeclineReason.CommandType = CommandType.StoredProcedure;
+                sqlWriteDeclineReason.CommandText = "WriteDeclineReason";
+
+                sqlWriteDeclineReason.Parameters.Add("@reason", SqlDbType.VarChar);
+                sqlWriteDeclineReason.Parameters.Add("@demandId", SqlDbType.SmallInt);
+
+                sqlWriteDeclineReason.Parameters["@reason"].Value = d.DeclineReason;
+                sqlWriteDeclineReason.Parameters["@demandId"].Value = d.DemandId;
+
+
+                sqlWriteDeclineReason.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            finally
+            {
+                dbConnect.Close();
+            }
+        }
+
         public static void WriteNewPlatform(String platformName, User user)
         {
             SqlConnection dbConnect = new SqlConnection(connectionString);

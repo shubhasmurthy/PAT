@@ -18,7 +18,7 @@ BEGIN
 	RETURN @@ROWCOUNT;
 END
 
-SELECT [Demand].DemandId, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate
+SELECT [Demand].DemandId, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate, [TeamBoard].TeamName
 FROM [Demand]
 LEFT JOIN [TeamBoard]
 ON [Demand].DemandId = [TeamBoard].DemandId 

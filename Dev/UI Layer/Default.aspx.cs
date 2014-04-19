@@ -9,8 +9,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Text;
+using System.Net.Mail;
 using Platform_Allocation_Tool.Business_Layer;
 using Platform_Allocation_Tool.Data_Layer;
+using System.Threading;
 
 namespace Platform_Allocation_Tool
 {
@@ -23,6 +25,7 @@ namespace Platform_Allocation_Tool
         protected List<TeamBoard> tbListDummy = new List<TeamBoard>();
         protected List<TechnicalDocumentation> tdListDummy = new List<TechnicalDocumentation>();
         static Demand demand;
+        static String status="";
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -33,6 +36,20 @@ namespace Platform_Allocation_Tool
             {
                 user = (User)Session["user"];
                 log = (SessionLog)Session["log"];
+                if (status.Equals("")) 
+                {
+                    if (user.Role.Equals("Administrator") || user.Role.Equals("TeamRep"))
+                    {
+                        status = "Open";
+                        getOpenDemandRecords();
+                    }
+                    else
+                    {
+                        status = "Saved";
+                        getSavedDemandRecords();
+                    }
+                }
+                
 
                 log.Write("Info", "Page View -> Home", String.Empty);
 
@@ -47,14 +64,11 @@ namespace Platform_Allocation_Tool
                     {
                         demand = ViewState["Demand"] as Demand;
                     }
-                    
-                    refreshGrid();
+
+                    Demand.MonitorClosedDemands();
+                    //refreshGrid();
                     renderView();
-                    ShowTeamBoard();
-                    ShowTechDoc();
-                    lblStatus.Text = "";
-                    CalendarClose.StartDate = DateTime.Now;
-                    txtBoxSubmitterName.Text = user.Name;
+                    
                 }
 
             }
@@ -81,26 +95,75 @@ namespace Platform_Allocation_Tool
             }
         }
 
+        private void SendMail(object mail)
+        {
+            MailMessage mailMsg = (MailMessage)mail;
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Credentials = new System.Net.NetworkCredential("platform.allocation.alerts@gmail.com", "patalerts");
+            client.Send(mailMsg);
+        }
+
         private void renderView()
         {
+            ShowTeamBoard();
+            ShowTechDoc();
+            //lblStatus.Text = "";
+            refreshGrid();
+            CalendarClose.StartDate = DateTime.Now;
+            txtBoxSubmitterName.Text = user.Name;
             System.Web.UI.WebControls.Button myButton;
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = false;
+            txtboxDeclineReasonShow.Visible = false;
+            mpeDeclineReason.Hide();
             if (user.IsAdmin)
             {
                 myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnToBeApproved");
                 myButton.Visible = false;
                 myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnToBeClaimed");
                 myButton.Visible = false;
+                myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnWaitingApproval");
+                myButton.Visible = false;
+                btnDeclineDemand.Visible = false;
             }
             else
             {
                 myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnNewDemand");
                 myButton.Visible = false;
+                myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnSaved");
+                myButton.Visible = false;
+                myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnMaintenance");
+                myButton.Visible = false;
+                txtBoxCloseDateEdit.Enabled = false;
+                CalendarCloseEdit.Enabled = false;
+                btnDeleteDemand.Visible = false;
                 if(user.Role.Equals("TeamMgr"))
                 {
                     myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnActive");
                     myButton.Visible = false;
                     myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnToBeClaimed");
                     myButton.Visible = false;
+                    myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnWaitingApproval");
+                    myButton.Visible = false;
+                    
+
+                    //Edit Modal Popup controls
+                    txtBoxDemandNameEdit.Enabled = false;
+                    dropDownStatusMenuEdit.Enabled = false;
+                    DropDownListProgramNameEdit.Enabled = false;
+                    DropDownListPlatformNameEdit.Enabled = false;
+                    ImageButton3.Visible = false;
+                    CalendarCloseEdit.Enabled = false;
+                    txtBoxCloseDateEdit.Enabled = false;
+                    ImageButton4.Visible = false;
+                    btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                    btnTechDocEdit.Attributes.Add("Style", "display:none");
+                    GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                    TechnicalDocGridEdit.Columns[0].Visible = false;
+
                 }
                 else if (user.Role.Equals("TeamRep")) 
                 {
@@ -108,34 +171,286 @@ namespace Platform_Allocation_Tool
                     myButton.Visible = false;
                     myButton = (System.Web.UI.WebControls.Button)Master.FindControl("btnToBeApproved");
                     myButton.Visible = false;
+                    btnDeclineDemand.Visible = false;
+                    txtBoxCloseDateEdit.Enabled = false;
+                    ImageButton4.Visible = false;
+                    btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                    btnTechDocEdit.Attributes.Add("Style", "display:none");
+                    txtBoxDemandNameEdit.Enabled = false;
+                    dropDownStatusMenuEdit.Enabled = false;
+                    DropDownListProgramNameEdit.Enabled = false;
+                    DropDownListPlatformNameEdit.Enabled = false;
+                    ImageButton3.Visible = false;
                 }
-                NewDemandModalPanel.Visible = false;
-                EditDemandModalPanel.Visible = false;
             }
-            
-
         }
 
         private void refreshGrid()
         {
-
-            DataView dv = new DataView(Demand.ListAll(user));              
+            DataView dv = null;
+            if(status.Equals("Open"))
+            {
+                dv = new DataView(Demand.ListOpenDemands(user));
+            }
+            else if (status.Equals("Saved"))
+            {
+                dv = new DataView(Demand.ListSavedDemands(user));
+            }
+            else if (status.Equals("Approved"))
+            {
+                dv = new DataView(Demand.ListApprovedDemands(user));
+            }
+            else if (status.Equals("Closed"))
+            {
+                dv = new DataView(Demand.ListClosedDemands(user));
+            }
+            else if (status.Equals("Ordered"))
+            {
+                dv = new DataView(Demand.ListOrderedDemands(user));
+            }
+            else if (status.Equals("Declined"))
+            {
+                dv = new DataView(Demand.ListDeclinedDemands(user));
+            }
             DemandsGrid.DataSource = dv;
-            DemandsGrid.DataBind();         
+            DemandsGrid.DataBind();
+                      
+        }
+
+        public void getDeclinedDemandRecords()
+        {
+            status = "Declined";
+            refreshGrid();
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = true;
+            txtboxDeclineReasonShow.Visible = true;
+            txtboxDeclineReasonShow.Enabled = false;
+            String userRole = user.Role;
+            if (userRole.Equals("Administrator"))
+            {
+                txtBoxDemandNameEdit.Enabled = false;
+                dropDownStatusMenuEdit.Enabled = false;
+                DropDownListProgramNameEdit.Enabled = false;
+                DropDownListPlatformNameEdit.Enabled = false;
+                ImageButton3.Visible = false;
+                ImageButton4.Visible = true;
+                CalendarCloseEdit.Enabled = true;
+                btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                btnTechDocEdit.Attributes.Add("Style", "display:none");
+                btnUpdate.Text = "Update";
+                GridViewTeamBoardsEdit.Columns[0].Visible = true;
+                TechnicalDocGridEdit.Columns[0].Visible = true;
+                btnUpdate.Visible = true;
+            }
+            else if (userRole.Equals("TeamMgr"))
+            {
+                btnUpdate.Visible = true;
+                btnUpdate.Text = "Approve";
+                btnDeclineDemand.Visible = false;
+            }
+            else if (userRole.Equals("TeamRep"))
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = true;
+                TechnicalDocGridEdit.Columns[0].Visible = true;
+                btnUpdate.Text = "Save";
+                btnUpdate.Visible = true;
+            }
         }
 
         public void getOpenDemandRecords()
         {
-            DataView dv = new DataView(Demand.ListOpenDemands(user));
-            DemandsGrid.DataSource = dv;
-            DemandsGrid.DataBind();
+            status = "Open";
+            refreshGrid();
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = false;
+            txtboxDeclineReasonShow.Visible = false;
+            //render Modal controls
+            String userRole = user.Role;
+            if (userRole.Equals("Administrator")) 
+            {
+                txtBoxDemandNameEdit.Enabled = true;
+                dropDownStatusMenuEdit.Enabled = false;
+                DropDownListProgramNameEdit.Enabled = true;
+                DropDownListPlatformNameEdit.Enabled = true;
+                ImageButton3.Visible = true;
+                ImageButton4.Visible = true;
+                CalendarClose.Enabled = true;
+                btnTeamBoardAddEdit.Attributes.Remove("Style");
+                btnTechDocEdit.Attributes.Remove("Style");
+                btnUpdate.Text = "Update";
+                GridViewTeamBoardsEdit.Columns[0].Visible = true;
+                TechnicalDocGridEdit.Columns[0].Visible = true;
+                btnUpdate.Visible = true;
+            }
+            else if (userRole.Equals("TeamMgr"))
+            {
+                btnDeclineDemand.Visible = false;
+            }
+            else if (userRole.Equals("TeamRep"))
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = true;
+                TechnicalDocGridEdit.Columns[0].Visible = true;
+                btnUpdate.Text = "Save";
+                btnUpdate.Visible = true;
+            }
+        }
+
+        public void showNewDemandWindow()
+        {
+            ShowTeamBoard();
+            ShowTechDoc();
+            NewDemandModal.Show();
         }
 
         public void getApprovedDemandRecords()
         {
-            DataView dv = new DataView(Demand.ListApprovedDemands(user));
-            DemandsGrid.DataSource = dv;
-            DemandsGrid.DataBind();
+            status = "Approved";
+            refreshGrid();
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = false;
+            txtboxDeclineReasonShow.Visible = false;
+            //render Modal controls
+            String userRole = user.Role;
+            if (userRole.Equals("Administrator"))
+            {
+                txtBoxDemandNameEdit.Enabled = false;
+                dropDownStatusMenuEdit.Enabled = false;
+                DropDownListProgramNameEdit.Enabled = false;
+                DropDownListPlatformNameEdit.Enabled = false;
+                ImageButton3.Visible = false;
+                ImageButton4.Visible = false;
+                CalendarCloseEdit.Enabled = false;
+                btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                btnTechDocEdit.Attributes.Add("Style", "display:none");
+                btnUpdate.Text = "Order";
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = true;
+            }
+            else if (userRole.Equals("TeamMgr"))
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = false;
+                btnDeclineDemand.Visible = true;
+            }
+            else
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = false;
+                btnDeclineDemand.Visible = false;
+            }
+        }
+
+        public void getSavedDemandRecords()
+        {
+            status = "Saved";
+            refreshGrid();
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = false;
+            txtboxDeclineReasonShow.Visible = false;
+            //render Modal controls
+            String userRole = user.Role;
+            if (userRole.Equals("Administrator"))
+            {
+                txtBoxDemandNameEdit.Enabled = false;
+                dropDownStatusMenuEdit.Enabled = false;
+                DropDownListProgramNameEdit.Enabled = false;
+                DropDownListPlatformNameEdit.Enabled = false;
+                ImageButton3.Visible = false;
+                ImageButton4.Visible = true;
+                CalendarCloseEdit.Enabled = true;
+                btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                btnTechDocEdit.Attributes.Add("Style", "display:none");
+                btnUpdate.Text = "Update";
+                GridViewTeamBoardsEdit.Columns[0].Visible = true;
+                TechnicalDocGridEdit.Columns[0].Visible = true;
+                btnUpdate.Visible = true;
+            }
+            else if (userRole.Equals("TeamMgr"))
+            {
+                btnUpdate.Visible = true;
+                btnUpdate.Text = "Approve";
+                btnDeclineDemand.Visible = true;
+            }
+            else if (userRole.Equals("TeamRep"))
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = false;
+            }
+        }
+
+        public void getClosedDemandRecords()
+        {
+            status = "Closed";
+            refreshGrid();
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = false;
+            txtboxDeclineReasonShow.Visible = false;
+            //render Modal controls
+            String userRole = user.Role;
+            if (userRole.Equals("Administrator"))
+            {
+                txtBoxDemandNameEdit.Enabled = false;
+                dropDownStatusMenuEdit.Enabled = false;
+                DropDownListProgramNameEdit.Enabled = false;
+                DropDownListPlatformNameEdit.Enabled = false;
+                ImageButton3.Visible = false;
+                ImageButton4.Visible = true;
+                CalendarCloseEdit.Enabled = true;
+                btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                btnTechDocEdit.Attributes.Add("Style", "display:none");
+                btnUpdate.Text = "Modify Window";
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = true;
+            }
+            else 
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = false;
+            }
+        }
+
+        public void getOrderedDemandRecords()
+        {
+            status = "Ordered";
+            refreshGrid();
+            UpdatePanel9.Visible = false;
+            UpdatePanel4.Visible = true;
+            lblDeclined.Visible = false;
+            txtboxDeclineReasonShow.Visible = false;
+            //render Modal controls
+            String userRole = user.Role;
+            if (userRole.Equals("Administrator"))
+            {
+                txtBoxDemandNameEdit.Enabled = false;
+                dropDownStatusMenuEdit.Enabled = false;
+                DropDownListProgramNameEdit.Enabled = false;
+                DropDownListPlatformNameEdit.Enabled = false;
+                ImageButton3.Visible = false;
+                ImageButton4.Visible = false;
+                CalendarCloseEdit.Enabled = false;
+                btnTeamBoardAddEdit.Attributes.Add("Style", "display:none");
+                btnTechDocEdit.Attributes.Add("Style", "display:none");
+                btnUpdate.Visible = false;
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+            }
+            else
+            {
+                GridViewTeamBoardsEdit.Columns[0].Visible = false;
+                TechnicalDocGridEdit.Columns[0].Visible = false;
+                btnUpdate.Visible = false;
+            }
         }
 
         private void ShowTeamBoard()
@@ -159,15 +474,38 @@ namespace Platform_Allocation_Tool
 
         protected void DemandsGrid_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.Header)
+            try
             {
-                e.Row.Cells[0].Text = "Demand ID";
-                e.Row.Cells[1].Text = "Demand Name";
-                e.Row.Cells[2].Text = "Platform Name";
-                e.Row.Cells[3].Text = "Program Name";
-                e.Row.Cells[4].Text = "Close Date";
+                if (e.Row.RowType == DataControlRowType.Header)
+                {
+                    e.Row.Cells[0].Text = "Demand ID";
+                    e.Row.Cells[1].Text = "Demand Name";
+                    e.Row.Cells[2].Text = "Team Name";
+                    e.Row.Cells[3].Text = "Platform Name";
+                    e.Row.Cells[4].Text = "Program Name";
+                    e.Row.Cells[5].Text = "Close Date";
+                }
+                else if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    e.Row.Attributes.Add("onmouseover", "self.MouseOverOldColor=this.style.backgroundColor;this.style.backgroundColor='#EDBBAF'");
+                    e.Row.Attributes.Add("onmouseout", "this.style.backgroundColor=self.MouseOverOldColor");
+                    if ((e.Row.RowIndex + 2) < 10)
+                    {
+                        e.Row.Attributes["onclick"] = "javascript:__doPostBack('ctl00$MainContent$DemandsGrid$ctl0" + (e.Row.RowIndex + 2) + "$lblEdit','')";
+                    }
+                    else
+                    {
+                        e.Row.Attributes["onclick"] = "javascript:__doPostBack('ctl00$MainContent$DemandsGrid$ctl" + (e.Row.RowIndex + 2) + "$lblEdit','')";
+                    }
+                     
+                    //Page.ClientScript.GetPostBackClientHyperlink((LinkButton)DemandsGrid.Rows[e.Row.RowIndex+2].FindControl("lblEdit"), "");
+                    e.Row.Attributes["style"] = "cursor:pointer";
+                }
             }
-            
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -248,6 +586,8 @@ namespace Platform_Allocation_Tool
                 if (liTeams.Selected)
                 {
                     noTeamSelected = false;
+                    if (!Teams.Contains(liTeams.Text))
+                        Teams.Add(liTeams.Text);
                     foreach (TeamBoard liTeamBoard in tbList)
                     {
                         newTbList.Add(new TeamBoard(liTeamBoard.SKU, liTeamBoard.BoardType, liTeams.Text));
@@ -272,15 +612,57 @@ namespace Platform_Allocation_Tool
                 }
                 Demand demand = new Demand(name, prgName, pfName, date, newTbList, tdList);
                 Int16 demandID = ConnectionData.WriteNewDemand(demand, user);
-                lblStatus.Text = "Successfully inserted DemandID: " + demandID;
+                
+               // lblStatus.Text = "Successfully inserted DemandID: " + demandID;
                // MessageBox.Show("Demand ID -- " + demandID + " inserted successfully", "New Demand");
                 ClearNewBoardForm();
                 NewDemandModal.Hide();
                 //DemandsGrid.DataSource = new DataView(Demand.ListAll());
                 refreshGrid();
                 UpdatePanel4.Update();
-
+                System.Web.UI.WebControls.Button btnNewDemand = (System.Web.UI.WebControls.Button)Master.FindControl("btnNewDemand");
+                btnNewDemand.Attributes.Add("Style", "background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat");
                 //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Demand ID:" + demandID + " inserted successfully')", true);
+                try
+                {
+                    Team t = new Team(Teams.First());
+
+                    MailMessage mail = new MailMessage();
+                    mail.To.Add(t.RepEmailId);
+                    mail.CC.Add(t.MgrEmailId);
+                    mail.CC.Add(user.Email);
+                    mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                    mail.Subject = "New demand (#" + demandID + ") has been created";
+                    StringBuilder mailBody = new StringBuilder();
+                    mailBody.Append("Hi, \n A New demand  has been created for your team and is ready for review.\n");
+                    mailBody.Append("\nID: " + demandID);
+                    mailBody.Append("\nName: " + demand.DemandName);
+                    mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                    mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                    mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                    mailBody.Append("\nClose Date: " + demand.CloseDate);
+                    mailBody.Append("\nBoards: ");
+                    foreach (TeamBoard tb in demand.Boards)
+                    {
+                        mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                    }
+                    mailBody.Append("\nTechnical Documents ");
+                    foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                    {
+                        mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                    }
+                    mail.Body = mailBody.ToString();
+
+                    Thread emailThread = new Thread(SendMail);
+                    emailThread.Start(mail);
+                   
+                }
+                catch(Exception ex)
+                {
+
+                }
+                
+                
             }
             else
             {
@@ -328,6 +710,8 @@ namespace Platform_Allocation_Tool
         {
             ClearNewBoardForm();
             NewDemandModal.Hide();
+            System.Web.UI.WebControls.Button btnNewDemand = (System.Web.UI.WebControls.Button)Master.FindControl("btnNewDemand");
+            btnNewDemand.Attributes.Add("Style", "background-image: url('../Images/tabunselected.png'); padding-right:30px; padding-left:0px; background-repeat: no-repeat");
         }
 
         protected void ImageButton2_Click(object sender, ImageClickEventArgs e)
@@ -743,6 +1127,7 @@ namespace Platform_Allocation_Tool
             GridViewTeamBoardsEdit.DataBind();
             RadioButtonListTeamsEdit.SelectedValue = demand.Boards[0].TeamName;
             ShowTechDocForEdit();
+            txtboxDeclineReasonShow.Text = demand.DeclineReason;
         }
 
         protected void btnCancelUpdate_Click(object sender, EventArgs e)
@@ -757,6 +1142,21 @@ namespace Platform_Allocation_Tool
         {
             if (e.CommandName == "EditRow")
             {
+                if (GridViewTeamBoardsEdit.EditIndex != -1)
+                {
+                    String bType = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[GridViewTeamBoardsEdit.EditIndex].FindControl("lblBTEdit")).Text;
+                    String sku = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[GridViewTeamBoardsEdit.EditIndex].FindControl("lblSKUEdit")).Text;
+                    Int16 noOfBoards = Convert.ToInt16(((System.Web.UI.WebControls.TextBox)GridViewTeamBoardsEdit.Rows[GridViewTeamBoardsEdit.EditIndex].FindControl("txtNoOfBoardsEdit")).Text);
+                    List<TeamBoard> tbList = demand.Boards;
+                    foreach (TeamBoard tb in tbList)
+                    {
+                        if (tb.BoardType.Equals(bType) && tb.SKU.Equals(sku))
+                        {
+                            tb.NumberOfBoards = noOfBoards;
+                            break;
+                        }
+                    }
+                }
                 int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 GridViewTeamBoardsEdit.EditIndex = rowIndex;
                 mpeEdit.Show();
@@ -781,30 +1181,11 @@ namespace Platform_Allocation_Tool
             }
             else if (e.CommandName == "CancelUpdate")
             {
-                TeamBoardGrid.EditIndex = -1;
-                mpeEdit.Show();
-                ShowTeamBoardForEdit();
-            }
-            else if (e.CommandName == "UpdateRow")
-            {
-                int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
-                String bType = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[rowIndex].FindControl("lblBTEdit")).Text;
-                String sku = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[rowIndex].FindControl("lblSKUEdit")).Text;
-                Int16 noOfBoards = Convert.ToInt16(((System.Web.UI.WebControls.TextBox)GridViewTeamBoardsEdit.Rows[rowIndex].FindControl("txtNoOfBoardsEdit")).Text);
-                List<TeamBoard> tbList = demand.Boards;
-                foreach (TeamBoard tb in tbList)
-                {
-                    if (tb.BoardType.Equals(bType) && tb.SKU.Equals(sku))
-                    {
-                        tb.NumberOfBoards = noOfBoards;
-                        break;
-                    }
-                }
-
                 GridViewTeamBoardsEdit.EditIndex = -1;
                 mpeEdit.Show();
                 ShowTeamBoardForEdit();
             }
+            
         }
 
         private void ShowTeamBoardForEdit()
@@ -893,60 +1274,298 @@ namespace Platform_Allocation_Tool
             }
         }
 
-        protected void btnUpdate_Click(object sender, EventArgs e)
+        private void updateOpenDemand()
+        {
+            StringBuilder errorMsg = new StringBuilder();                 
+            bool validData = true;
+            if (user.Role.Equals("Administrator"))
+            {
+
+                bool isNew = false;
+                String name = String.Empty;
+                String pfName = String.Empty;
+                String prgName = String.Empty;
+                DateTime date = new DateTime();
+                if (txtBoxDemandNameEdit.Text.Trim().Length == 0)
+                {
+                    errorMsg.Append("Enter Demand Name.<br/>");
+                    validData = false;
+                }
+                else
+                {
+                    demand.DemandName = txtBoxDemandNameEdit.Text.Trim();
+                }
+                //To-Do: Check for number of boards
+                demand.Status = dropDownStatusMenuEdit.SelectedValue;
+                if (DropDownListProgramNameEdit.SelectedValue == "-1")
+                {
+                    errorMsg.Append("Enter Program Name.<br/>");
+                    validData = false;
+                }
+                else
+                {
+                    demand.ProgramName = DropDownListProgramNameEdit.SelectedItem.Text;
+                }
+
+                if (DropDownListPlatformNameEdit.Enabled)
+                {
+                    if (DropDownListPlatformNameEdit.SelectedValue == "-1")
+                    {
+                        errorMsg.Append("Enter Platform Name.<br/>");
+                        validData = false;
+                    }
+                    else
+                    {
+                        demand.PlatformName = (DropDownListPlatformNameEdit.SelectedItem.Text);
+                    }
+                }
+                else
+                {
+                    if (txtBoxOtherPlatformEdit.Text.Trim().Length == 0)
+                    {
+                        errorMsg.Append("Enter Platform Name.<br/>");
+                        validData = false;
+                    }
+                    else
+                    {
+                        demand.PlatformName = txtBoxOtherPlatformEdit.Text.Trim();
+                        isNew = true;
+                    }
+                }
+
+                if (txtBoxCloseDateEdit.Text.Trim().Length == 0)
+                {
+                    errorMsg.Append("Enter Close Date.<br/>");
+                    validData = false;
+                }
+                else
+                {
+                    date = System.Convert.ToDateTime(txtBoxCloseDateEdit.Text);
+                    date = date.Date.Add(new TimeSpan(23, 59, 59));
+                    demand.CloseDate = date;
+                }
+                List<TeamBoard> tbList = demand.Boards;
+                if (tbList.Count == 0)
+                {
+                    errorMsg.Append("Enter board information.<br/>");
+                    validData = false;
+                }
+                String team = RadioButtonListTeams.SelectedValue;
+                if (validData)
+                {
+                    if (isNew)
+                    {
+                        ConnectionData.WriteNewPlatform(demand.PlatformName, user);
+                    }
+                    ConnectionData.EditDemand(demand, user);
+
+                    //Mail the update
+                    try
+                    {
+                        Team t = new Team(demand.Boards.First().TeamName);
+
+                        MailMessage mail = new MailMessage();
+                        mail.To.Add(t.RepEmailId);
+                        mail.CC.Add(t.MgrEmailId);
+                        mail.CC.Add(user.Email);
+                        mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                        mail.Subject = "Demand (#" + demand.DemandId + ") has been updated";
+                        StringBuilder mailBody = new StringBuilder();
+                        mailBody.Append("Hi, \n The below demand of your team has been updated.\n");
+                        mailBody.Append("\nID: " + demand.DemandId);
+                        mailBody.Append("\nName: " + demand.DemandName);
+                        mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                        mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                        mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                        mailBody.Append("\nClose Date: " + demand.CloseDate);
+                        mailBody.Append("\nBoards: ");
+                        foreach (TeamBoard tb in demand.Boards)
+                        {
+                            mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                        }
+                        mailBody.Append("\nTechnical Documents ");
+                        foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                        {
+                            mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                        }
+                        mail.Body = mailBody.ToString();
+
+                        Thread emailThread = new Thread(SendMail);
+                        emailThread.Start(mail);
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+
+                    //  lblStatus.Text = "Successfully edited DemandID: " + demand.DemandId;
+                    ClearEditForm();
+                    mpeEdit.Hide();
+                    refreshGrid();
+                    DropDownListPlatformName.DataBind();
+                    DropDownListPlatformNameEdit.DataBind();
+                    UpdatePanel4.Update();
+                    UpdatePanel1.Update();
+                }
+                else
+                {
+                    mpeEdit.Show();
+                    lblEditDemandStatusEdit.ForeColor = System.Drawing.Color.Red;
+                    lblEditDemandStatusEdit.Text = errorMsg.ToString();
+                    ShowTeamBoardForEdit();
+                    ShowTechDocForEdit();
+                }
+            }
+            else if (user.Role.Equals("TeamRep"))
+            {
+                bool allBoardsSaved = true;
+                List<TeamBoard> tbList = demand.Boards;
+                if (tbList.Count == 0)
+                {
+                    errorMsg.Append("Enter board information.<br/>");
+                    validData = false;
+                }
+                else
+                {
+                    foreach (TeamBoard tb in tbList)
+                    {
+                        if (tb.NumberOfBoards < 1)
+                        {
+                            allBoardsSaved = false;
+                        }
+                    }
+                    if (allBoardsSaved == true)
+                    {
+                        demand.Status = "Saved";
+                    }
+                }
+                if (validData && allBoardsSaved)
+                {
+                    ConnectionData.SaveDemand(demand, user);
+
+                    //Mail the saved demand
+                    try
+                    {
+                        Team t = new Team(demand.Boards.First().TeamName);
+
+                        MailMessage mail = new MailMessage();
+                        mail.CC.Add(t.RepEmailId);
+                        mail.To.Add(t.MgrEmailId);
+                        mail.CC.Add(ConnectionData.GetAdmin().Email);    
+                        mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                        mail.Subject = "Demand (#" + demand.DemandId + ") awaits approval";
+                        StringBuilder mailBody = new StringBuilder();
+                        mailBody.Append("Hi, \n The below demand of your team has been saved by "+t.RepId+". Please review it.\n");
+                        mailBody.Append("\nID: " + demand.DemandId);
+                        mailBody.Append("\nName: " + demand.DemandName);
+                        mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                        mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                        mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                        mailBody.Append("\nClose Date: " + demand.CloseDate);
+                        mailBody.Append("\nBoards: ");
+                        foreach (TeamBoard tb in demand.Boards)
+                        {
+                            mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                        }
+                        mailBody.Append("\nTechnical Documents ");
+                        foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                        {
+                            mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                        }
+                        mail.Body = mailBody.ToString();
+
+                        Thread emailThread = new Thread(SendMail);
+                        emailThread.Start(mail);
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    ClearEditForm();
+                    mpeEdit.Hide();
+                    refreshGrid();
+                    UpdatePanel4.Update();
+                    UpdatePanel1.Update();
+                }
+                else if (validData) 
+                {
+                    ConnectionData.EditTeamBoard(demand);
+                    ClearEditForm();
+                    mpeEdit.Hide();
+                    refreshGrid();
+                    UpdatePanel4.Update();
+                    UpdatePanel1.Update();
+                }
+                else
+                {
+                    mpeEdit.Show();
+                    lblEditDemandStatusEdit.ForeColor = System.Drawing.Color.Red;
+                    lblEditDemandStatusEdit.Text = errorMsg.ToString();
+                    ShowTeamBoardForEdit();
+                    ShowTechDocForEdit();
+                }
+            }
+        }
+        private void updateApprovedDemand()
+        {
+            demand.Status = "Ordered";
+            ConnectionData.UpdateDemandStatus(demand, user);
+            ClearEditForm();
+            mpeEdit.Hide();
+            refreshGrid();
+            UpdatePanel4.Update();
+            UpdatePanel1.Update();
+            //Mail the saved demand
+            try
+            {
+                Team t = new Team(demand.Boards.First().TeamName);
+
+                MailMessage mail = new MailMessage();
+                mail.To.Add(t.RepEmailId);
+                mail.To.Add(t.MgrEmailId);
+                mail.CC.Add(ConnectionData.GetAdmin().Email);
+                mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                mail.Subject = "Demand (#" + demand.DemandId + ") has been ordered";
+                StringBuilder mailBody = new StringBuilder();
+                mailBody.Append("Hi, \n The below demand of your team has been ordered.\n");
+                mailBody.Append("\nID: " + demand.DemandId);
+                mailBody.Append("\nName: " + demand.DemandName);
+                mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                mailBody.Append("\nClose Date: " + demand.CloseDate);
+                mailBody.Append("\nBoards: ");
+                foreach (TeamBoard tb in demand.Boards)
+                {
+                    mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                }
+                mailBody.Append("\nTechnical Documents ");
+                foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                {
+                    mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                }
+                mail.Body = mailBody.ToString();
+
+                Thread emailThread = new Thread(SendMail);
+                emailThread.Start(mail);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+           
+        }
+
+        private void updateClosedDemand()
         {
             StringBuilder errorMsg = new StringBuilder();
             bool validData = true;
-            bool isNew = false;
-            String name = String.Empty;
-            String pfName = String.Empty;
-            String prgName = String.Empty;
             DateTime date = new DateTime();
-            if (txtBoxDemandNameEdit.Text.Trim().Length == 0)
-            {
-                errorMsg.Append("Enter Demand Name.<br/>");
-                validData = false;
-            }
-            else
-            {
-                demand.DemandName = txtBoxDemandNameEdit.Text.Trim();
-            }
-            if (DropDownListProgramNameEdit.SelectedValue == "-1")
-            {
-                errorMsg.Append("Enter Program Name.<br/>");
-                validData = false;
-            }
-            else
-            {
-                demand.ProgramName = DropDownListProgramNameEdit.SelectedItem.Text;
-            }
-
-            if (DropDownListPlatformNameEdit.Enabled)
-            {
-                if (DropDownListPlatformNameEdit.SelectedValue == "-1")
-                {
-                    errorMsg.Append("Enter Platform Name.<br/>");
-                    validData = false;
-                }
-                else
-                {
-                    demand.PlatformName = (DropDownListPlatformNameEdit.SelectedItem.Text);
-                }
-            }
-            else
-            {
-                if (txtBoxOtherPlatformEdit.Text.Trim().Length == 0)
-                {
-                    errorMsg.Append("Enter Platform Name.<br/>");
-                    validData = false;
-                }
-                else
-                {
-                    demand.PlatformName = txtBoxOtherPlatformEdit.Text.Trim();
-                    isNew = true;
-                }
-            }
-
+            
             if (txtBoxCloseDateEdit.Text.Trim().Length == 0)
             {
                 errorMsg.Append("Enter Close Date.<br/>");
@@ -954,30 +1573,60 @@ namespace Platform_Allocation_Tool
             }
             else
             {
-                date = System.Convert.ToDateTime(txtBoxCloseDateEdit.Text);
+                date = System.Convert.ToDateTime(txtBoxCloseDateEdit.Text);              
                 date = date.Date.Add(new TimeSpan(23, 59, 59));
                 demand.CloseDate = date;
+                if (demand.CloseDate >= System.DateTime.Today)
+                {
+                    demand.Status = "Open";
+                }
             }
-            List<TeamBoard> tbList = demand.Boards;
-            if (tbList.Count == 0)
-            {
-                errorMsg.Append("Enter board information.<br/>");
-                validData = false;
-            }
-            String team = RadioButtonListTeams.SelectedValue;
+
             if (validData)
             {
-                if (isNew)
+                ConnectionData.EditDemandDetails(demand, user);
+                //Mail the extended demand
+                try
                 {
-                    ConnectionData.WriteNewPlatform(demand.PlatformName, user);
+                    Team t = new Team(demand.Boards.First().TeamName);
+
+                    MailMessage mail = new MailMessage();
+                    mail.To.Add(t.RepEmailId);
+                    mail.CC.Add(t.MgrEmailId);
+                    mail.CC.Add(ConnectionData.GetAdmin().Email);
+                    mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                    mail.Subject = "Demand (#" + demand.DemandId + ") has an extended close date";
+                    StringBuilder mailBody = new StringBuilder();
+                    mailBody.Append("Hi, \n The below demand window of your team has been extended. Please review it.\n");
+                    mailBody.Append("\nID: " + demand.DemandId);
+                    mailBody.Append("\nName: " + demand.DemandName);
+                    mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                    mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                    mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                    mailBody.Append("\nClose Date: " + demand.CloseDate);
+                    mailBody.Append("\nBoards: ");
+                    foreach (TeamBoard tb in demand.Boards)
+                    {
+                        mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                    }
+                    mailBody.Append("\nTechnical Documents ");
+                    foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                    {
+                        mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                    }
+                    mail.Body = mailBody.ToString();
+
+                    Thread emailThread = new Thread(SendMail);
+                    emailThread.Start(mail);
+
                 }
-                ConnectionData.EditDemand(demand, user);
-                lblStatus.Text = "Successfully edited DemandID: " + demand.DemandId;
+                catch (Exception ex)
+                {
+
+                }
                 ClearEditForm();
                 mpeEdit.Hide();
                 refreshGrid();
-                DropDownListPlatformName.DataBind();
-                DropDownListPlatformNameEdit.DataBind();
                 UpdatePanel4.Update();
                 UpdatePanel1.Update();
             }
@@ -990,10 +1639,251 @@ namespace Platform_Allocation_Tool
                 ShowTechDocForEdit();
             }
         }
+
+        private void updateSavedDemand()
+        {
+            StringBuilder errorMsg = new StringBuilder();
+            bool validData = true;
+            
+            bool allBoardsSaved = true;
+            List<TeamBoard> tbList = demand.Boards;
+            if (tbList.Count == 0)
+            {
+                errorMsg.Append("Enter board information.<br/>");
+                btnTeamBoardAddEdit.Attributes.Remove("Style");
+                validData = false;
+            }
+            else
+            {
+                foreach (TeamBoard tb in tbList)
+                {
+                    if (tb.NumberOfBoards < 1)
+                    {
+                        allBoardsSaved = false;
+                    }
+                }
+                if (allBoardsSaved == true)
+                {
+                    if (user.Role.Equals("Administrator"))
+                    {
+                        demand.Status = "Saved";
+                    }
+                    else if(user.Role.Equals("TeamMgr"))
+                    {
+                        demand.Status = "Approved";
+                    }
+                }
+            }
+            if (validData && allBoardsSaved)
+            {
+                ConnectionData.SaveDemand(demand, user);
+                if (demand.Status.Equals("Saved"))
+                {
+                    //Mail the saved demand
+                    try
+                    {
+                        Team t = new Team(demand.Boards.First().TeamName);
+
+                        MailMessage mail = new MailMessage();
+                        mail.CC.Add(t.RepEmailId);
+                        mail.To.Add(t.MgrEmailId);
+                        mail.CC.Add(ConnectionData.GetAdmin().Email);
+                        mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                        mail.Subject = "Demand (#" + demand.DemandId + ") awaits approval";
+                        StringBuilder mailBody = new StringBuilder();
+                        mailBody.Append("Hi, \n The below demand of your team has been saved by " + t.RepId + ". Please review it.\n");
+                        mailBody.Append("\nID: " + demand.DemandId);
+                        mailBody.Append("\nName: " + demand.DemandName);
+                        mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                        mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                        mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                        mailBody.Append("\nClose Date: " + demand.CloseDate);
+                        mailBody.Append("\nBoards: ");
+                        foreach (TeamBoard tb in demand.Boards)
+                        {
+                            mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                        }
+                        mailBody.Append("\nTechnical Documents ");
+                        foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                        {
+                            mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                        }
+                        mail.Body = mailBody.ToString();
+
+                        Thread emailThread = new Thread(SendMail);
+                        emailThread.Start(mail);
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+                else if (demand.Status.Equals("Approved"))
+                {
+                    //Mail the saved demand
+                    try
+                    {
+                        Team t = new Team(demand.Boards.First().TeamName);
+
+                        MailMessage mail = new MailMessage();
+                        mail.CC.Add(t.RepEmailId);
+                        mail.CC.Add(t.MgrEmailId);
+                        mail.To.Add(ConnectionData.GetAdmin().Email);
+                        mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                        mail.Subject = "Demand (#" + demand.DemandId + ") has been approved";
+                        StringBuilder mailBody = new StringBuilder();
+                        mailBody.Append("Hi, \n The below demand of your team has been approved by " + t.MgrId + " and is ready for ordering.\n");
+                        mailBody.Append("\nID: " + demand.DemandId);
+                        mailBody.Append("\nName: " + demand.DemandName);
+                        mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                        mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                        mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                        mailBody.Append("\nClose Date: " + demand.CloseDate);
+                        mailBody.Append("\nBoards: ");
+                        foreach (TeamBoard tb in demand.Boards)
+                        {
+                            mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                        }
+                        mailBody.Append("\nTechnical Documents ");
+                        foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                        {
+                            mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                        }
+                        mail.Body = mailBody.ToString();
+
+                        Thread emailThread = new Thread(SendMail);
+                        emailThread.Start(mail);
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+                
+                ClearEditForm();
+                mpeEdit.Hide();
+                refreshGrid();
+                UpdatePanel4.Update();
+                UpdatePanel1.Update();
+            }
+            else if (validData)
+            {
+                ConnectionData.EditTeamBoard(demand);
+                //Mail the saved demand
+                try
+                {
+                    Team t = new Team(demand.Boards.First().TeamName);
+
+                    MailMessage mail = new MailMessage();
+                    mail.To.Add(t.RepEmailId);
+                    mail.CC.Add(t.MgrEmailId);
+                    mail.CC.Add(ConnectionData.GetAdmin().Email);
+                    mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                    mail.Subject = "Demand (#" + demand.DemandId + ") has been updated";
+                    StringBuilder mailBody = new StringBuilder();
+                    mailBody.Append("Hi, \n The below demand has been updated by " + t.RepId + ".\n");
+                    mailBody.Append("\nID: " + demand.DemandId);
+                    mailBody.Append("\nName: " + demand.DemandName);
+                    mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                    mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                    mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                    mailBody.Append("\nClose Date: " + demand.CloseDate);
+                    mailBody.Append("\nBoards: ");
+                    foreach (TeamBoard tb in demand.Boards)
+                    {
+                        mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                    }
+                    mailBody.Append("\nTechnical Documents ");
+                    foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                    {
+                        mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                    }
+                    mail.Body = mailBody.ToString();
+
+                    Thread emailThread = new Thread(SendMail);
+                    emailThread.Start(mail);
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+                ClearEditForm();
+                mpeEdit.Hide();
+                refreshGrid();
+                UpdatePanel4.Update();
+                UpdatePanel1.Update();
+            }
+            else
+            {
+                mpeEdit.Show();
+                lblEditDemandStatusEdit.ForeColor = System.Drawing.Color.Red;
+                lblEditDemandStatusEdit.Text = errorMsg.ToString();
+                ShowTeamBoardForEdit();
+                ShowTechDocForEdit();
+            }            
+        }
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (GridViewTeamBoardsEdit.EditIndex != -1)
+            {
+                if (GridViewTeamBoardsEdit.EditIndex != -1)
+                {
+                    String bType = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[GridViewTeamBoardsEdit.EditIndex].FindControl("lblBTEdit")).Text;
+                    String sku = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[GridViewTeamBoardsEdit.EditIndex].FindControl("lblSKUEdit")).Text;
+                    Int16 noOfBoards = Convert.ToInt16(((System.Web.UI.WebControls.TextBox)GridViewTeamBoardsEdit.Rows[GridViewTeamBoardsEdit.EditIndex].FindControl("txtNoOfBoardsEdit")).Text);
+                    List<TeamBoard> tbList = demand.Boards;
+                    foreach (TeamBoard tb in tbList)
+                    {
+                        if (tb.BoardType.Equals(bType) && tb.SKU.Equals(sku))
+                        {
+                            tb.NumberOfBoards = noOfBoards;
+                            break;
+                        }
+                    }
+                }
+                /*
+                for (int rowIndex = 0; rowIndex < GridViewTeamBoardsEdit.Rows.Count; rowIndex++)
+                {
+                    String bType = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[rowIndex].FindControl("lblBTEdit")).Text;
+                    String sku = ((System.Web.UI.WebControls.Label)GridViewTeamBoardsEdit.Rows[rowIndex].FindControl("lblSKUEdit")).Text;
+                    Int16 noOfBoards = Convert.ToInt16(((System.Web.UI.WebControls.TextBox)GridViewTeamBoardsEdit.Rows[rowIndex].FindControl("txtNoOfBoardsEdit")).Text);
+                    List<TeamBoard> tbList = demand.Boards;
+                    foreach (TeamBoard tb in tbList)
+                    {
+                        if (tb.BoardType.Equals(bType) && tb.SKU.Equals(sku))
+                        {
+                            tb.NumberOfBoards = noOfBoards;
+                            break;
+                        }
+                    }
+                }*/
+                GridViewTeamBoardsEdit.EditIndex = -1;
+            }
+            if (status.Equals("Open"))
+            {
+                updateOpenDemand();
+            }
+            else if (status.Equals("Saved") || status.Equals("Declined"))
+            {
+                updateSavedDemand();
+            }
+            else if (status.Equals("Approved"))
+            {
+                updateApprovedDemand();
+            }
+            else if (status.Equals("Closed"))
+            {
+                updateClosedDemand();
+            }
+            
+        }
         private void ClearEditForm()
         {
             lblEditDemandStatusEdit.Text = "";
-            if (!DropDownListPlatformNameEdit.Enabled)
+            if (!DropDownListPlatformNameEdit.Enabled && user.Role.Equals("Administration"))
             {
                 txtBoxOtherPlatformEdit.Text = "";
                 txtBoxOtherPlatformEdit.Visible = false;
@@ -1001,6 +1891,16 @@ namespace Platform_Allocation_Tool
             }
             ShowTeamBoardForEdit();
             ShowTechDocForEdit();
+        }
+
+        protected void DemandsGrid_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Int16 demandId = Convert.ToInt16(e.CommandArgument);
+            int rowIndex = DemandsGrid.SelectedRow.RowIndex;
+            Int16 demandId = Convert.ToInt16(((System.Web.UI.WebControls.LinkButton)DemandsGrid.Rows[rowIndex].FindControl("lblEdit")).Text);
+            renderDemandView(demandId);
+            UpdatePanel4.Update();
+            mpeEdit.Show();
         }
 
         protected void DropDownListBoardTypeEdit_DataBound(object sender, EventArgs e)
@@ -1265,12 +2165,395 @@ namespace Platform_Allocation_Tool
 
         protected void btnDeleteDemand_Click(object sender, EventArgs e)
         {
-            ConnectionData.DeleteDemand(demand);
-            refreshGrid();
-           // UpdatePanel4.Update();
+            mpeEdit.Show();
+            mpeDeleteConfirm.Show();
+            pnlDemandDelete.Visible = true;
         }
 
+        
+
         #endregion
+
+        #region Session Logout
+        public void LogOut()
+        {
+            status = "";
+        }
+        #endregion
+
+        #region Admin Utility
+
+        public void AdminUtility()
+        {
+            UpdatePanel4.Visible = false;
+            UpdatePanel9.Visible = true;
+        }
+        protected void btnSaveNewProgram_Click(object sender, EventArgs e)
+        {
+            bool validData = true;
+            StringBuilder errorMsg = new StringBuilder();
+            if (txtboxNewProgramName.Text.Trim().Length == 0)
+            {
+                errorMsg.Append("Enter Program Name.<br/>");
+                validData = false;
+            }
+            if (validData)
+            {
+                ConnectionData.AddNewProgram(txtboxNewProgramName.Text.Trim());
+                mpeNewProgram.Hide();
+                if (DropDownListProgramName.Enabled == true)
+                {
+                    DropDownListProgramName.DataBind();
+                }
+                else
+                {
+                    DropDownListProgramName.DataBind();
+                    DropDownListProgramName.Enabled = false;
+                }
+                if (DropDownListProgramNameEdit.Enabled == true)
+                {
+                    DropDownListProgramNameEdit.DataBind();
+                }
+                else
+                {
+                    DropDownListProgramNameEdit.DataBind();
+                    DropDownListProgramNameEdit.Enabled = false;
+                }
+                
+            }
+            else
+            {
+                mpeNewProgram.Show();
+                lblNewProgramStatus.ForeColor = System.Drawing.Color.Red;
+                lblNewProgramStatus.Text = errorMsg.ToString();
+            }
+        }
+
+        protected void btnCloseNewProgram_Click(object sender, EventArgs e)
+        {
+            mpeNewProgram.Hide();
+            lblNewProgramStatus.Text = "";
+            txtboxNewProgramName.Text = "";
+        }
+
+        protected void btnSaveNewPlatform_Click(object sender, EventArgs e)
+        {
+            bool validData = true;
+            StringBuilder errorMsg = new StringBuilder();
+            if (txtboxNewPlatformName.Text.Trim().Length == 0)
+            {
+                errorMsg.Append("Enter Platform Name.<br/>");
+                validData = false;
+            }
+            if (validData)
+            {
+                ConnectionData.WriteNewPlatform(txtboxNewPlatformName.Text.Trim(), user);
+                mpeNewPlatform.Hide();
+                if (DropDownListPlatformName.Enabled == true)
+                {
+                    DropDownListPlatformName.DataBind();
+                }
+                else
+                {
+                    DropDownListPlatformName.DataBind();
+                    DropDownListPlatformName.Enabled = false;
+                }
+                if (DropDownListPlatformNameEdit.Enabled == true)
+                {
+                    DropDownListPlatformNameEdit.DataBind();
+                }
+                else
+                {
+                    DropDownListPlatformNameEdit.DataBind();
+                    DropDownListPlatformNameEdit.Enabled = false;
+                }
+                lblNewPlatformStatus.Text = "";
+                txtboxNewPlatformName.Text = "";
+
+            }
+            else
+            {
+                mpeNewPlatform.Show();
+                lblNewPlatformStatus.ForeColor = System.Drawing.Color.Red;
+                lblNewPlatformStatus.Text = errorMsg.ToString();
+            }
+
+        }
+
+        protected void btnCloseNewPlatform_Click(object sender, EventArgs e)
+        {
+            mpeNewPlatform.Hide();
+            lblNewPlatformStatus.Text = "";
+            txtboxNewPlatformName.Text = "";
+        }
+
+        protected void ddlNewBoardSKUBTList_DataBound(object sender, EventArgs e)
+        {
+            ListItem liBoardType = new ListItem("Select Board type", "-1");
+            ddlNewBoardSKUBTList.Items.Insert(0, liBoardType);
+        }
+
+        protected void ddlNewBoardSKUBTList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mpeNewBoardSKU.Show();
+            txtBoxNewBoardSKUSKU.Text = "";
+        }
+
+        protected void bnNewBoardSKUOtherBT_Click(object sender, EventArgs e)
+        {
+            mpeNewBoardSKU.Show();
+            if (txtBoxNewBoardSKUOtherBT.Visible)
+            {
+                ddlNewBoardSKUBTList.Enabled = true;
+                txtBoxNewBoardSKUOtherBT.Text = "";
+                txtBoxNewBoardSKUOtherBT.Visible = false;
+                txtBoxNewBoardSKUSKU.Text = "";
+            }
+            else
+            {
+                ddlNewBoardSKUBTList.Enabled = false;
+                txtBoxNewBoardSKUOtherBT.Visible = true;
+                txtBoxNewBoardSKUOtherBT.Visible = true;
+                txtBoxNewBoardSKUSKU.Text = "";
+            }
+        }
+
+        protected void btnCloseNewBoardSKU_Click(object sender, EventArgs e)
+        {
+            mpeNewBoardSKU.Show();
+            clearNewBoardSKUForm();
+        }
+
+        protected void btnSaveNewBoardSKU_Click(object sender, EventArgs e)
+        {
+            String bt = String.Empty;
+            String sku = String.Empty;
+            String team = String.Empty;
+            StringBuilder errorMsg = new StringBuilder();
+            bool validData = true;
+            if (ddlNewBoardSKUBTList.Enabled)
+            {
+                if (ddlNewBoardSKUBTList.SelectedValue == "-1")
+                {
+                    errorMsg.Append("Enter Board type.<br/>");
+                    validData = false;
+                }
+                else
+                {
+                    bt = ddlNewBoardSKUBTList.SelectedItem.Text;
+                }
+            }
+            else
+            {
+                if (txtBoxNewBoardSKUOtherBT.Text == String.Empty)
+                {
+                    errorMsg.Append("Enter Board type.<br/>");
+                    validData = false;
+                }
+                else
+                {
+                    bt = txtBoxNewBoardSKUOtherBT.Text.Trim();
+                }
+            }        
+            if (txtBoxNewBoardSKUSKU.Text == String.Empty)
+            {
+                errorMsg.Append("Enter SKU.<br/>");
+                validData = false;
+            }
+            else
+            {
+                sku = txtBoxNewBoardSKUSKU.Text.Trim();
+            }
+            
+            if (validData)
+            {
+                mpeNewBoardSKU.Hide();
+                clearNewBoardSKUForm();
+                ConnectionData.WriteNewBoard(new TeamBoard(sku, bt, null), user);
+                if (ddlNewBoardSKUBTList.Enabled)
+                {
+                    ddlNewBoardSKUBTList.DataBind();
+                }
+                else
+                {
+                    ddlNewBoardSKUBTList.DataBind();
+                    ddlNewBoardSKUBTList.Enabled = false;
+                }
+                if (DropDownListBoardType.Enabled)
+                {
+                    DropDownListBoardType.DataBind();
+                }
+                else
+                {
+                    DropDownListBoardType.DataBind();
+                    DropDownListBoardType.Enabled = false;
+                }
+                if (DropDownListPlatformNameEdit.Enabled)
+                {
+                    DropDownListPlatformNameEdit.DataBind();
+                }
+                else
+                {
+                    DropDownListPlatformNameEdit.DataBind();
+                    DropDownListPlatformNameEdit.Enabled = false;
+                }
+            }
+            else
+            {
+                lblNewNBoardSKUStatus.ForeColor = System.Drawing.Color.Red;
+                lblNewNBoardSKUStatus.Text = errorMsg.ToString();
+                mpeNewBoardSKU.Show();               
+            }
+       }
+
+        private void clearNewBoardSKUForm()
+        {
+            mpeNewBoardSKU.Hide();
+            txtBoxNewBoardSKUOtherBT.Text = "";
+            txtBoxNewBoardSKUOtherBT.Visible = false;
+            ddlNewBoardSKUBTList.Enabled = true;
+            ddlNewBoardSKUBTList.SelectedIndex = -1;
+            ddlNewBoardSKUBTList.Enabled = true;
+            txtBoxNewBoardSKUSKU.Text = "";
+            lblNewNBoardSKUStatus.Text = "";
+        }
+
+        protected void btnDeclineDemand_Click(object sender, EventArgs e)
+        {
+            mpeEdit.Show();
+            mpeDeclineReason.Show();
+            pnlDemandDecline.Visible = true;
+        }
+
+
+        protected void btnSaveDeclineReason_Click(object sender, EventArgs e)
+        {
+            if (txtboxDeclineReason.Text.Trim().Equals(""))
+            {
+                mpeEdit.Show();
+                mpeDeclineReason.Show();
+                lblDeclineStatus.ForeColor = System.Drawing.Color.Red;
+                lblDeclineStatus.Text = "Please enter the reason!";
+            }
+            else
+            {
+                mpeDeclineReason.Hide();
+                mpeEdit.Hide();
+                demand.Status = "Declined";
+                demand.DeclineReason = txtboxDeclineReason.Text.Trim();
+                ConnectionData.UpdateDemandStatus(demand, user);
+                ConnectionData.WriteDeclineReason(demand);
+                txtboxDeclineReason.Text = "";
+                refreshGrid();
+                //Mail the declined demand
+                try
+                {
+                    Team t = new Team(demand.Boards.First().TeamName);
+
+                    MailMessage mail = new MailMessage();
+                    mail.To.Add(t.RepEmailId);
+                    mail.CC.Add(t.MgrEmailId);
+                    mail.CC.Add(ConnectionData.GetAdmin().Email);
+                    mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                    mail.Subject = "Demand (#" + demand.DemandId + ") has been declined";
+                    StringBuilder mailBody = new StringBuilder();
+                    mailBody.Append("Hi, \n The below demand of your team has been declined.\n");
+                    mailBody.Append("\nID: " + demand.DemandId);
+                    mailBody.Append("\nName: " + demand.DemandName);
+                    mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                    mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                    mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                    mailBody.Append("\nClose Date: " + demand.CloseDate);
+                    mailBody.Append("\nBoards: ");
+                    foreach (TeamBoard tb in demand.Boards)
+                    {
+                        mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                    }
+                    mailBody.Append("\nTechnical Documents ");
+                    foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                    {
+                        mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                    }
+                    mailBody.Append("\n\nDecline Reason: " + demand.DeclineReason);
+                    mail.Body = mailBody.ToString();
+
+                    Thread emailThread = new Thread(SendMail);
+                    emailThread.Start(mail);
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            
+            // UpdatePanel4.Update();
+        }
+
+        protected void btnCloseDeclineReason_Click(object sender, EventArgs e)
+        {
+            mpeEdit.Show();
+            mpeDeclineReason.Hide();
+            txtboxDeclineReason.Text = "";
+            lblDeclineStatus.Text = "";
+        }
+
+        protected void btnCloseDeleteConfirm_Click(object sender, EventArgs e)
+        {
+            mpeEdit.Show();
+            mpeDeleteConfirm.Hide();
+        }
+
+
+        protected void btnSaveDeleteConfirm_Click(object sender, EventArgs e)
+        {
+            ConnectionData.DeleteDemand(demand);
+            refreshGrid();
+            //Mail the deleted demand
+            try
+            {
+                Team t = new Team(demand.Boards.First().TeamName);
+
+                MailMessage mail = new MailMessage();
+                mail.To.Add(t.RepEmailId);
+                mail.To.Add(t.MgrEmailId);
+                String adminEmail = ConnectionData.GetAdmin().Email;
+                mail.CC.Add(adminEmail);
+                mail.From = new MailAddress("platform.allocation.alerts@gmail.com");
+                mail.Subject = "Demand (#" + demand.DemandId + ") has been deleted";
+                StringBuilder mailBody = new StringBuilder();
+                mailBody.Append("Hi, \n The below demand of your team has been deleted. Please contact the admin(" + adminEmail + ") for details. \n");
+                mailBody.Append("\nID: " + demand.DemandId);
+                mailBody.Append("\nName: " + demand.DemandName);
+                mailBody.Append("\nProgram Name: " + demand.ProgramName);
+                mailBody.Append("\nPlatform Name: " + demand.PlatformName);
+                mailBody.Append("\nOpen Date: " + demand.CreatedDate);
+                mailBody.Append("\nClose Date: " + demand.CloseDate);
+                mailBody.Append("\nBoards: ");
+                foreach (TeamBoard tb in demand.Boards)
+                {
+                    mailBody.Append("\n\t" + tb.BoardType + "\t" + tb.SKU);
+                }
+                mailBody.Append("\nTechnical Documents ");
+                foreach (TechnicalDocumentation td in demand.TechnicalDocumentation)
+                {
+                    mailBody.Append("\n\t" + td.TDocName + "\t" + td.TDocAddress);
+                }
+                mail.Body = mailBody.ToString();
+
+                Thread emailThread = new Thread(SendMail);
+                emailThread.Start(mail);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            // UpdatePanel4.Update();
+        }
+        #endregion
+
+        
     }
 }
         

@@ -5,14 +5,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[ListApprovedDemandsPerUser] (@id VARCHAR(50)) 
+CREATE PROCEDURE [dbo].[ListSavedDemandsPerUser] (@id VARCHAR(50)) 
 AS
 BEGIN
 	SET NOCOUNT ON;	
-	DECLARE @StateID INDICATOR
-	SELECT @StateID = Id
+	DECLARE @SavedStateID INDICATOR
+	DECLARE @DeclinedStateID INDICATOR
+	SELECT @SavedStateID = Id
 	FROM [State]
-	WHERE Name = 'Approved'
+	WHERE Name = 'Saved'
 
 	DECLARE @admnRole TINYINT
 	SELECT @admnRole = Id
@@ -29,7 +30,7 @@ BEGIN
 			FROM [Demand]
 			LEFT JOIN [TeamBoard]
 			ON [Demand].DemandId = [TeamBoard].DemandId 
-			WHERE [Demand].StateId = @StateID
+			WHERE [Demand].StateId = @SavedStateID 
 			ORDER BY [Demand].DemandId
 		End
 	Else
@@ -39,7 +40,7 @@ BEGIN
 			LEFT JOIN [TeamBoard]
 			ON [Demand].DemandId = [TeamBoard].DemandId 
 			WHERE [TeamBoard].TeamName = (SELECT Name FROM Team WHERE ManagerId = @id OR RepresentativeId = @id)
-			AND [Demand].StateId = @StateID
+			AND [Demand].StateId = @SavedStateID 
 			ORDER BY [Demand].DemandId
 		End
 	RETURN @@ROWCOUNT;

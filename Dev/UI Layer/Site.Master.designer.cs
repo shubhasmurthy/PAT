@@ -49,6 +49,15 @@ namespace Platform_Allocation_Tool {
         protected global::System.Web.UI.WebControls.Button btnActive;
         
         /// <summary>
+        /// btnSaved control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSaved;
+        
+        /// <summary>
         /// btnToBeClaimed control.
         /// </summary>
         /// <remarks>
@@ -65,6 +74,24 @@ namespace Platform_Allocation_Tool {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnToBeApproved;
+        
+        /// <summary>
+        /// btnWaitingApproval control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnWaitingApproval;
+        
+        /// <summary>
+        /// btnDeclined control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDeclined;
         
         /// <summary>
         /// btnApproved control.
@@ -92,6 +119,24 @@ namespace Platform_Allocation_Tool {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnOrdered;
+        
+        /// <summary>
+        /// btnMaintenance control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnMaintenance;
+        
+        /// <summary>
+        /// btnLogout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLogout;
         
         /// <summary>
         /// MainContent control.

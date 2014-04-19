@@ -5,14 +5,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[ListApprovedDemandsPerUser] (@id VARCHAR(50)) 
+CREATE PROCEDURE [dbo].[ListClosedDemandsPerUser] (@id VARCHAR(50)) 
 AS
 BEGIN
 	SET NOCOUNT ON;	
 	DECLARE @StateID INDICATOR
 	SELECT @StateID = Id
 	FROM [State]
-	WHERE Name = 'Approved'
+	WHERE Name = 'Closed'
 
 	DECLARE @admnRole TINYINT
 	SELECT @admnRole = Id

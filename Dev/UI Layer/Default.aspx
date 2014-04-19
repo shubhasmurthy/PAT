@@ -23,20 +23,22 @@
     }
  </style>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:Label ID="lblStatus" runat="server" Text=""></asp:Label>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">   
+
     <ajaxToolkit:ToolkitScriptManager CombineScripts="false" EnablePartialRendering="true" runat="Server" ID="ScriptManager1" />
-    <ajaxToolkit:ModalPopupExtender ID="NewDemandModal" runat="server" TargetControlId="btnNewDemand" PopupControlID="NewDemandModalPanel" OkControlID="btnMFinish" CancelControlID="btnMClose" DropShadow="true" BackgroundCssClass="ModalBackground" />
-    <asp:Button ID="btnMClose" runat="server" Style="visibility: hidden" />
-    <asp:Button ID="btnMFinish" runat="server" Style="visibility: hidden" />
+    <ajaxToolkit:ModalPopupExtender ID="NewDemandModal" runat="server" TargetControlId="btnNewDemand1" PopupControlID="NewDemandModalPanel" OkControlID="btnMFinish" CancelControlID="btnMClose" DropShadow="true" BackgroundCssClass="ModalBackground" />
+    <asp:Button ID="btnNewDemand1" runat="server" Style="display: none;" />
+    <asp:Button ID="btnMClose" runat="server" Style="display: none;" />
+    <asp:Button ID="btnMFinish" runat="server" Style="display: none;" />
     <asp:Panel ID="NewDemandModalPanel" runat="server" CssClass="modalPopup" >
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
     <asp:SqlDataSource ID="SqlDataSourceStatus" runat="server" ConnectionString="<%$ ConnectionStrings:PlatformAllocation_preDbConnection %>" SelectCommand="SELECT [Id], [Name] FROM [State]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDataSourceProgramName" runat="server" ConnectionString="<%$ ConnectionStrings:PlatformAllocation_preDbConnection %>" SelectCommand="SELECT [Name] FROM [Program]"></asp:SqlDataSource>
     <asp:SqlDataSource ID="SqlDataSourcePlatform" runat="server" ConnectionString="<%$ ConnectionStrings:PlatformAllocation_preDbConnection %>" SelectCommand="SELECT [Name] FROM [Platform]"></asp:SqlDataSource>
-      
+ 
            <div class="header" style="text-align:center;">
+               New Demand
             </div>
         <div style="padding:10px;">
                    <div>
@@ -79,7 +81,7 @@
 			</div>
             <div class="third">
                 <div>Close Date</div>
-                <div style="float: left; display: inline;"><asp:TextBox ID="txtBoxCloseDate" runat="server" Height="19px" Width="160px" contentEditable="false"></asp:TextBox></div>
+                <div style="float: left; display: inline;"><asp:TextBox ID="txtBoxCloseDate" runat="server" Height="19px" Width="160px"></asp:TextBox></div>
                   <div style="float:left; display: inline; padding-left: 3px;"><asp:ImageButton ID="ImageButton1" runat="server" Height="24px" ImageUrl="~/Images/calendar.png" Width="25px" /></div>
                 <ajaxToolkit:CalendarExtender ID="CalendarClose" runat="server" TargetControlID="txtBoxCloseDate" PopupButtonID="ImageButton1" CssClass=".cal_Calendar"></ajaxToolkit:CalendarExtender>
 				</div>   
@@ -154,7 +156,7 @@
                 <asp:UpdatePanel ID="UpdatePanel3" runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
                         Technical Documentation
-                <asp:GridView ID="TechnicalDocGrid" runat="server" CssClass="grid" AutoGenerateColumns="False" OnRowCommand="TechnicalDocGrid_RowCommand">                   
+                <asp:GridView ID="TechnicalDocGrid" runat="server" CssClass="grid" AutoGenerateColumns="False" OnRowCommand="TechnicalDocGrid_RowCommand" >                   
                             <AlternatingRowStyle CssClass="gridAlternate" />
                            <RowStyle CssClass="gridItem" Height="22px" />
 							<HeaderStyle CssClass="gridHeaderLeft" ForeColor="#FFFFFF" Wrap="false" />
@@ -273,34 +275,29 @@
     </asp:UpdatePanel>
         </asp:Panel>
     
-    <asp:UpdatePanel ID="UpdatePanel4" runat="server" UpdateMode="Conditional">
+    <asp:UpdatePanel ID="UpdatePanel4" runat="server" UpdateMode="Conditional" style="padding-bottom:200px;">
         <ContentTemplate>
             <asp:UpdatePanel ID="UpdatePanel5" runat="server">
          <ContentTemplate>
-                <asp:GridView ID="DemandsGrid" runat="server" BackColor="White" BorderColor="White" BorderStyle="Ridge" BorderWidth="2px" CellPadding="3" CellSpacing="1" Width="100%" GridLines="None" OnRowDataBound="DemandsGrid_RowDataBound" AutoGenerateColumns="False" OnRowCommand="DemandsGrid_RowCommand">
-            <Columns>
+                <asp:GridView ID="DemandsGrid" runat="server" EmptyDataText="No demands!" CssClass="mGrid" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" ShowHeaderWhenEmpty="True" OnRowDataBound="DemandsGrid_RowDataBound" AutoGenerateColumns="False" OnRowCommand="DemandsGrid_RowCommand" OnSelectedIndexChanged="DemandsGrid_SelectedIndexChanged">
+                     <Columns>
                 <asp:TemplateField HeaderText="Demand ID">
                     <EditItemTemplate>
                         <asp:Label ID="lblDemandID" runat="server" Text='<%# Bind("DemandId") %>'></asp:Label>
                     </EditItemTemplate>
                     <ItemTemplate>
-                        <asp:LinkButton ID="lblEdit" CommandArgument='<%# Eval("DemandId") %>' CommandName="EditThisRow" ForeColor="#8C4510" runat="server" CausesValidation="false"><%# Eval("DemandId") %></asp:LinkButton>
+                        <asp:LinkButton ID="lblEdit" CommandArgument='<%# Eval("DemandId") %>' CommandName="EditThisRow" runat="server" CausesValidation="false"><%# Eval("DemandId") %></asp:LinkButton>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:BoundField DataField="DemandName" HeaderText="Demand Name" />
+                <asp:BoundField DataField="TeamName" HeaderText="Team Name" />
                 <asp:BoundField DataField="PlatformName" HeaderText="Platform Name" />
                 <asp:BoundField DataField="ProgramName" HeaderText="Program Name" />
                 <asp:BoundField DataField="CloseDate" HeaderText="Close Date" />
             </Columns>
-        <FooterStyle BackColor="#C6C3C6" ForeColor="Black" />
-        <HeaderStyle BackColor="#4A3C8C" Font-Bold="True" ForeColor="#E7E7FF" />
-        <PagerStyle BackColor="#C6C3C6" ForeColor="Black" HorizontalAlign="Right" />
-        <RowStyle BackColor="#DEDFDE" ForeColor="Black" />
-        <SelectedRowStyle BackColor="#9471DE" Font-Bold="True" ForeColor="White" />
-        <SortedAscendingCellStyle BackColor="#F1F1F1" />
-        <SortedAscendingHeaderStyle BackColor="#594B9C" />
-        <SortedDescendingCellStyle BackColor="#CAC9C9" />
-        <SortedDescendingHeaderStyle BackColor="#33276A" />
+            <PagerStyle CssClass="pgr" />
+            <AlternatingRowStyle CssClass="alt" />
+            
     </asp:GridView>
              <asp:Button ID="btnDummy" runat="server" Style="visibility: hidden" />
               <asp:Button ID="btnMOKEdit" runat="server" Style="visibility: hidden" />
@@ -312,6 +309,7 @@
             <ContentTemplate>
                 <asp:Panel ID="EditDemandModalPanel" runat="server" CssClass="modalPopup">
                      <div class="header" style="text-align:center;">
+                         Demand Details - Edit
                      </div>
                     <div style="padding:10px;">
                        <div>
@@ -324,7 +322,7 @@
                             </div>
                         <div class="second">
 	                        <div>Status</div>
-	                        <div><asp:DropDownList ID="dropDownStatusMenuEdit" runat="server" Width="170px" DataSourceID="SqlDataSourceStatus" DataTextField="Name" DataValueField="Name" Enabled="false"></asp:DropDownList></div>
+	                        <div><asp:DropDownList ID="dropDownStatusMenuEdit" runat="server" Width="170px" DataSourceID="SqlDataSourceStatus" DataTextField="Name" DataValueField="Name"></asp:DropDownList></div>
                         </div>
                         <div class="third">
                             <div>Submitter</div>
@@ -354,7 +352,7 @@
                             <div>Open Date</div>
                             <div style="float: left; display: inline;"><asp:TextBox ID="txtBoxOpenDateEdit" runat="server" Height="19px" Width="160px" Enabled="False" ></asp:TextBox></div>
                             <div>Close Date</div>
-                            <div style="float: left; display: inline;"><asp:TextBox ID="txtBoxCloseDateEdit" runat="server" Height="19px" Width="160px" contentEditable="false"></asp:TextBox></div>
+                            <div style="float: left; display: inline;"><asp:TextBox ID="txtBoxCloseDateEdit" runat="server" Height="19px" Width="160px"></asp:TextBox></div>
                               <div style="float:left; display: inline; padding-left: 3px;"><asp:ImageButton ID="ImageButton4" runat="server" Height="24px" ImageUrl="~/Images/calendar.png" Width="25px" /></div>
                             <ajaxToolkit:CalendarExtender ID="CalendarCloseEdit" runat="server" TargetControlID="txtBoxCloseDateEdit" PopupButtonID="ImageButton4" CssClass=".cal_Calendar"></ajaxToolkit:CalendarExtender>
 				            </div>   
@@ -380,7 +378,7 @@
                                     <asp:LinkButton ID="lblDelete" CommandName="DeleteRow" ForeColor="#8C4510" runat="server" CausesValidation="false">Delete</asp:LinkButton>
                                 </ItemTemplate>
                                 <EditItemTemplate>
-                                    <asp:LinkButton ID="lbEdit" CommandName="UpdateRow" ForeColor="#8C4510" runat="server">Update</asp:LinkButton>
+                                    
                                     <asp:LinkButton ID="lblCancel" CommandName="CancelUpdate" ForeColor="#8C4510" runat="server" CausesValidation="false">Cancel</asp:LinkButton>
                                 </EditItemTemplate>
                                 </asp:TemplateField>                           
@@ -462,15 +460,22 @@
                     </asp:UpdatePanel>
                 <div style="width:500px; text-align:right;"><asp:Button ID="btnTechDocEdit" runat="server" Text="Add" /></div>
             </div>
+                        <div style="width:560px;">
+                            <asp:Label ID="lblDeclined" runat="server" Text="Reason for decline "></asp:Label>
+                        </div>
+                        <div style="width:560px;">
+                            <asp:TextBox ID="txtboxDeclineReasonShow" runat="server" TextMode="MultiLine"></asp:TextBox>
+                        </div>
                     </div>
 
                     <div class="leftFooter">
                     <asp:Button ID="btnDeleteDemand" runat="server" Text="Delete" CssClass="yes" OnClick="btnDeleteDemand_Click" />
+                    <asp:Button ID="btnDeclineDemand" runat="server" Text="Decline" CssClass="yes" OnClick="btnDeclineDemand_Click"/>
                     </div>
 
                     <div class="footer">
                     <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="yes" OnClick="btnUpdate_Click" />
-                    <asp:Button ID="btnCancelUpdate" runat="server" Text="Cancel" CssClass="no" OnClick="btnCancelUpdate_Click" />
+                    <asp:Button ID="btnCancelUpdate" runat="server" Text="Close" CssClass="no" OnClick="btnCancelUpdate_Click" />
                     </div>
                     <ajaxToolkit:ModalPopupExtender ID="mpeTeamBoardEdit" runat="server" TargetControlID="btnTeamBoardAddEdit" PopupControlID="pnlTeamBoardEdit" OkControlID="btnOTbEdit" CancelControlID="btnFTbEdit" DropShadow="true" BackgroundCssClass="ModalBackground"/>
             <asp:Button ID="btnOTbEdit" runat="server" Style="visibility: hidden" />
@@ -545,11 +550,137 @@
                     <asp:Button ID="btnSaveTechDocEdit" runat="server" Text="Save" OnClick="btnSaveTechDocEdit_Click"/>
                     <asp:Button ID="btnCloseTechDocEdit" runat="server" Text="Close" OnClick="btnCloseTechDocEdit_Click"/>  
                 </asp:Panel>  
-                 </asp:Panel>
-                </ContentTemplate>
-            </asp:UpdatePanel>
+            <ajaxToolkit:ModalPopupExtender ID="mpeDeclineReason" runat="server" TargetControlID="btnDDDummy" PopupControlID="pnlDemandDecline" OkControlID="btnDDOk" CancelControlID="btnDDCancel" DropShadow="true" BackgroundCssClass="ModalBackground"/>
+            <asp:Button ID="btnDDOk" runat="server" Style="visibility: hidden" />
+            <asp:Button ID="btnDDDummy" runat="server" Style="visibility: hidden" />
+            <asp:Button ID="btnDDCancel" runat="server" Style="visibility: hidden" />
+            <asp:Panel ID="pnlDemandDecline" runat="server" Style="width: 100%; border: solid 1px black; height: 100%; background-color: White; margin-left: 10px">
+                <table>
+                        <tr>
+                            <td>
+                                <asp:Label ID="lblDeclineStatus" runat="server" Text=""></asp:Label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <asp:Label ID="lblDecline" runat="server" Text="Reason for Decline"></asp:Label>
+                            </td>
+                        </tr>
+                        <tr>                           
+                            <td>
+                                 <asp:TextBox ID="txtboxDeclineReason" runat="server" TextMode="MultiLine"></asp:TextBox>
+                            </td>        
+                        </tr>
+                    </table>
+                    <asp:Button ID="btnSaveDeclineReason" runat="server" Text="Save" OnClick="btnSaveDeclineReason_Click"/>
+                    <asp:Button ID="btnCloseDeclineReason" runat="server" Text="Cancel" OnClick="btnCloseDeclineReason_Click"/>  
+     
+                   </asp:Panel>
+                     <ajaxToolkit:ModalPopupExtender ID="mpeDeleteConfirm" runat="server" TargetControlID="btnDCDummy" PopupControlID="pnlDemandDelete" OkControlID="btnDCOk" CancelControlID="btnDCCancel" DropShadow="true" BackgroundCssClass="ModalBackground"/>
+            <asp:Button ID="btnDCOk" runat="server" Style="visibility: hidden" />
+            <asp:Button ID="btnDCDummy" runat="server" Style="visibility: hidden" />
+            <asp:Button ID="btnDCCancel" runat="server" Style="visibility: hidden" />
+            <asp:Panel ID="pnlDemandDelete" runat="server" Style="width: 100%; border: solid 1px black; height: 100%; background-color: White; margin-left: 10px">
+                Are you sure you want to delete?
+                <br /><br />
+                    <asp:Button ID="btnSaveDeleteConfirm" runat="server" Text="Yes" OnClick="btnSaveDeleteConfirm_Click"/>
+                    <asp:Button ID="btnCloseDeleteConfirm" runat="server" Text="No" OnClick="btnCloseDeleteConfirm_Click"/>  
+     
+                   </asp:Panel>
+                    </asp:Panel> 
+                </ContentTemplate>           
+         </asp:UpdatePanel>
         </ContentTemplate>
     </asp:UpdatePanel>
-  
-        
+     
+    <asp:UpdatePanel ID="UpdatePanel9" runat="server" UpdateMode="Conditional">  
+    <ContentTemplate>
+        <div>
+            <asp:LinkButton ID="lBtnNewProgram" ForeColor="#8C4510" runat="server">Add New Program</asp:LinkButton>
+        </div>
+        <div>
+            <asp:LinkButton ID="lBtnNewPlatform" ForeColor="#8C4510" runat="server">Add New Platform</asp:LinkButton>
+        </div>
+        <div>
+            <asp:LinkButton ID="lBtnNewBoardSKU" ForeColor="#8C4510" runat="server">Add Board-SKU</asp:LinkButton>
+        </div>
+    
+    <ajaxToolkit:ModalPopupExtender ID="mpeNewProgram" runat="server" TargetControlID="lBtnNewProgram" PopupControlID="pnlNewProgram" OkControlID="btnNPO" CancelControlID="btnNPC" DropShadow="true" BackgroundCssClass="ModalBackground"/>
+    <asp:Button ID="btnNPO" runat="server" Style="visibility: hidden" />
+    <asp:Button ID="btnNPC" runat="server" Style="visibility: hidden" />
+    <asp:Panel ID="pnlNewProgram" runat="server" Style="width: 100%; border: solid 1px black; height: 100%; background-color: White; margin-left: 10px">
+        <table>
+                <tr>
+                    <td>
+                        <asp:Label ID="lblNewProgramStatus" runat="server" Text=""></asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Program Name
+                    </td>                            
+                    <td>
+                        <asp:TextBox ID="txtboxNewProgramName" runat="server" ></asp:TextBox>
+                    </td>
+                </tr>
+            </table>
+            <asp:Button ID="btnSaveNewProgram" runat="server" Text="Save" OnClick="btnSaveNewProgram_Click"/>
+            <asp:Button ID="btnCloseNewProgram" runat="server" Text="Close" OnClick="btnCloseNewProgram_Click"/>  
+        </asp:Panel>  
+
+        <ajaxToolkit:ModalPopupExtender ID="mpeNewPlatform" runat="server" TargetControlID="lBtnNewPlatform" PopupControlID="pnlNewPlatform" OkControlID="btnNPO" CancelControlID="btnNPC" DropShadow="true" BackgroundCssClass="ModalBackground"/>
+    <asp:Panel ID="pnlNewPlatform" runat="server" Style="width: 100%; border: solid 1px black; height: 100%; background-color: White; margin-left: 10px">
+        <table>
+                <tr>
+                    <td>
+                        <asp:Label ID="lblNewPlatformStatus" runat="server" Text=""></asp:Label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Platform Name
+                    </td>                            
+                    <td>
+                        <asp:TextBox ID="txtboxNewPlatformName" runat="server" ></asp:TextBox>
+                    </td>
+                </tr>
+            </table>
+            <asp:Button ID="btnSaveNewPlatform" runat="server" Text="Save" OnClick="btnSaveNewPlatform_Click"/>
+            <asp:Button ID="btnCloseNewPlatform" runat="server" Text="Close" OnClick="btnCloseNewPlatform_Click"/>  
+        </asp:Panel>  
+
+    <ajaxToolkit:ModalPopupExtender ID="mpeNewBoardSKU" runat="server" TargetControlID="lBtnNewBoardSKU" PopupControlID="pnlNewBoardSKU" OkControlID="btnNPO" CancelControlID="btnNPC" DropShadow="true" BackgroundCssClass="ModalBackground"/>
+    <asp:Panel ID="pnlNewBoardSKU" runat="server" Style="width: 100%; border: solid 1px black; height: 100%; background-color: White; margin-left: 10px">
+        <table>
+                        <tr>
+                            <td>
+                                <asp:Label ID="lblNewNBoardSKUStatus" runat="server" Text=""></asp:Label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Board Type
+                            </td>
+                            <td>
+                                <asp:DropDownList ID="ddlNewBoardSKUBTList" runat="server" DataSourceID="SqlDataSourceBoardTypes" DataTextField="TypeName" DataValueField="TypeName" AutoPostBack="True" Height="24px" OnDataBound="ddlNewBoardSKUBTList_DataBound" OnSelectedIndexChanged="ddlNewBoardSKUBTList_SelectedIndexChanged"></asp:DropDownList>
+                                <asp:Button ID="bnNewBoardSKUOtherBT" runat="server" Text="+" OnClick="bnNewBoardSKUOtherBT_Click"/>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtBoxNewBoardSKUOtherBT" runat="server" Visible="False"></asp:TextBox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                SKU
+                            </td>
+                            <td>
+                                 <asp:TextBox ID="txtBoxNewBoardSKUSKU" runat="server"></asp:TextBox>
+                            </td>
+                        </tr>
+                    </table>
+            <asp:Button ID="btnSaveNewBoardSKU" runat="server" Text="Save" OnClick="btnSaveNewBoardSKU_Click"/>
+            <asp:Button ID="btnCloseNewBoardSKU" runat="server" Text="Close" OnClick="btnCloseNewBoardSKU_Click"/>  
+        </asp:Panel>  
+    </ContentTemplate>     
+    </asp:UpdatePanel>  
 </asp:Content>

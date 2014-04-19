@@ -115,6 +115,7 @@ namespace Platform_Allocation_Tool.Business_Layer
         private DateTime createdDate;
         private DateTime closeDate;
         private List<TeamBoard> boards;
+        private String declineReason;
         private List<TechnicalDocumentation> technicalDocumentation;
         //private 
 
@@ -125,6 +126,12 @@ namespace Platform_Allocation_Tool.Business_Layer
         {
             get { return demandId; }
             set { demandId = value; }
+        }
+
+        public String DeclineReason
+        {
+            get { return declineReason; }
+            set { declineReason = value; }
         }
 
         public String DemandName
@@ -208,14 +215,39 @@ namespace Platform_Allocation_Tool.Business_Layer
             return ConnectionData.ListAllDemands(u);
         }
 
+        public static void MonitorClosedDemands()
+        {
+            ConnectionData.MonitorClosedDemands();
+        }
+
         public static DataTable ListOpenDemands(User u)
         {
             return ConnectionData.ListAllDemands(u);
         }
 
+        public static DataTable ListDeclinedDemands(User u)
+        {
+            return ConnectionData.ListDeclinedDemands(u);
+        }
+
         public static DataTable ListApprovedDemands(User u)
         {
             return ConnectionData.ListApprovedDemands(u);
+        }
+
+        public static DataTable ListSavedDemands(User u)
+        {
+            return ConnectionData.ListSavedDemands(u);
+        }
+
+        public static DataTable ListClosedDemands(User u)
+        {
+            return ConnectionData.ListClosedDemands(u);
+        }
+
+        public static DataTable ListOrderedDemands(User u)
+        {
+            return ConnectionData.ListOrderedDemands(u);
         }
 
         #endregion

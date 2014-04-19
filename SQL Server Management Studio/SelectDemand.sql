@@ -9,7 +9,7 @@ CREATE PROCEDURE [dbo].[SelectDemand] (@id TINYINT)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	SELECT DemandId, DemandName, PlatformName, ProgramName, OpenDate, CloseDate, [State].Name
+	SELECT DemandId, DemandName, PlatformName, ProgramName, OpenDate, CloseDate, [State].Name, DeclineReason
 	  FROM [Demand]
 	  LEFT JOIN [State]
 			ON [Demand].[StateId] = [State].Id 

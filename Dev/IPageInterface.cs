@@ -10,6 +10,14 @@ namespace Platform_Allocation_Tool
     {
         void getOpenDemandRecords();
         void getApprovedDemandRecords();
+        void getSavedDemandRecords();
+        void getClosedDemandRecords();
+        void showNewDemandWindow();
+        void getOrderedDemandRecords();
+        void AdminUtility();
+        void getDeclinedDemandRecords();
+        void LogOut();
+
 
     }
 }

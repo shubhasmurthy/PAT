@@ -25,7 +25,7 @@ BEGIN
 	WHERE ID = @id
 	if(@admnRole = @uRole)
 	Begin
-			SELECT DISTINCT [Demand].DemandId AS DemandID, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate
+			SELECT DISTINCT [Demand].DemandId AS DemandID, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate, [TeamBoard].TeamName
 			FROM [Demand]
 			LEFT JOIN [TeamBoard]
 			ON [Demand].DemandId = [TeamBoard].DemandId 
@@ -34,7 +34,7 @@ BEGIN
 		End
 	Else
 		Begin
-			SELECT DISTINCT [Demand].DemandId AS DemandId, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate
+			SELECT DISTINCT [Demand].DemandId AS DemandId, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate, [TeamBoard].TeamName
 			FROM [Demand]
 			LEFT JOIN [TeamBoard]
 			ON [Demand].DemandId = [TeamBoard].DemandId 
@@ -46,6 +46,7 @@ BEGIN
 END
 
 
+	
 	DECLARE @StateID INDICATOR
 	SELECT @StateID = Id
 	FROM [State]
@@ -59,7 +60,7 @@ END
 	DECLARE @uRole TINYINT
 	SELECT @uRole = RoleID
 	FROM [User]
-	WHERE ID = 'ssunda30'
+	WHERE ID = 'ssundaMD'
 	if(@admnRole = @uRole)
 	Begin
 			SELECT DISTINCT [Demand].DemandId AS DemandID, [Demand].DemandName, [Demand].PlatformName, [Demand].ProgramName, [Demand].CloseDate
@@ -75,7 +76,7 @@ END
 			FROM [Demand]
 			LEFT JOIN [TeamBoard]
 			ON [Demand].DemandId = [TeamBoard].DemandId 
-			WHERE [TeamBoard].TeamName = (SELECT Name FROM Team WHERE ManagerId = 'ssunda30' OR RepresentativeId = 'ssunda30')
+			WHERE [TeamBoard].TeamName = (SELECT Name FROM Team WHERE ManagerId = 'ssundaMD' OR RepresentativeId = 'ssundaMD')
 			AND [Demand].StateId = @StateID
 			ORDER BY [Demand].DemandId
 		End

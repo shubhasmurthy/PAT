@@ -159,10 +159,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\grd_alt.png" />
+    <Content Include="Content\grd_head.png" />
+    <Content Include="Content\grd_pgr.png" />
     <Content Include="Content\GridView.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Content\ModalPopup.css" />
+    <Content Include="css\bootstrap.css" />
+    <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\heroic-features.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Images\add.png" />
+    <Content Include="Images\background.jpg" />
     <Content Include="Images\calendar.png" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />
@@ -204,6 +215,7 @@
     <Compile Include="Business Layer\Demand.cs" />
     <Compile Include="Business Layer\SessionLog.cs" />
     <Compile Include="Business Layer\SessionManager.cs" />
+    <Compile Include="Business Layer\Team.cs" />
     <Compile Include="Business Layer\User.cs" />
     <Compile Include="Data Layer\ConnectionData.cs" />
     <Compile Include="IPageInterface.cs" />
